@@ -17,6 +17,7 @@ dependencies:
 
   # Firebase
   firebase_core: ^1.0.3
+  cloud_firestore: ^1.0.5
 
   # Third party
 
