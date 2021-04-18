@@ -20,6 +20,7 @@ dependencies:
   cloud_firestore: ^1.0.5
 
   # Third party
+  google_fonts: ^2.0.0
 
 dev_dependencies:
   flutter_test:
