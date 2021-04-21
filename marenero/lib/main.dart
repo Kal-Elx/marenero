@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'design/app_theme.dart';
+import 'screens/home_screen.dart';
+import 'screens/host_screen.dart';
+import 'screens/join_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +18,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Marenero',
       theme: AppTheme().themeData,
-      home: Scaffold(),
+      home: HomeScreen(),
+      routes: {
+        HostScreen.routeName: (ctx) => HostScreen(),
+        JoinScreen.routeName: (ctx) => JoinScreen(),
+      },
     );
   }
 }
