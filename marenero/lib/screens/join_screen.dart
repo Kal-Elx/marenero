@@ -1,7 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class JoinScreen extends StatelessWidget {
+import '../widgets/party_setup/code_input.dart';
+import '../widgets/party_setup/lobby.dart';
+import '../utils/firestore_values.dart' as fs;
+
+class JoinScreen extends StatefulWidget {
   static const routeName = '/join';
+
+  @override
+  _JoinScreenState createState() => _JoinScreenState();
+}
+
+class _JoinScreenState extends State<JoinScreen> {
+  final _firestore = FirebaseFirestore.instance;
+  String? _partyId;
+
+  Future<void> _findParty(String code) async {
+    final partySnapshot = await _firestore
+        .collection(fs.Collection.parties)
+        .where(fs.Party.code, isEqualTo: code)
+        .get();
+    if (partySnapshot.docs.isNotEmpty) {
+      setState(() {
+        _partyId = partySnapshot.docs.first.id;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('There is no party with that code. Try again.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,9 +39,12 @@ class JoinScreen extends StatelessWidget {
     return Scaffold(
       body: Container(
         width: screenSize.width,
-        child: Text(
-          'Join party',
-          style: Theme.of(context).textTheme.headline2,
+        child: Center(
+          child: _partyId == null
+              ? CodeInput(
+                  onComplete: _findParty,
+                )
+              : Lobby(partyId: _partyId!),
         ),
       ),
     );
