@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../widgets/party_setup/lobby.dart';
+import '../widgets/search_tracks/search_tracks.dart';
 import '../widgets/information/error_display.dart';
 import '../widgets/information/loading_display.dart';
 import '../utils/spotify_api.dart';
@@ -73,6 +74,7 @@ class _HostScreenState extends State<HostScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Lobby(partyId: partyId),
+                  ListDisplay(spotifyAuthToken: _spotifyAuthToken),
                   ElevatedButton(
                     onPressed: () {},
                     child: Text('Start the party'),

@@ -46,7 +46,7 @@ class Lobby extends StatelessWidget {
                           Code(party.code),
                           Container(
                             constraints: BoxConstraints(
-                              maxHeight: 500,
+                              maxHeight: MediaQuery.of(context).size.height / 3,
                             ),
                             child: ParticipantsList(
                                 participants: party.participants),
