@@ -39,7 +39,13 @@ class Lobby extends StatelessWidget {
                 return Column(
                   children: [
                     Code(party.code),
-                    ParticipantsList(),
+                    Container(
+                      constraints: BoxConstraints(
+                        maxHeight: 500,
+                        maxWidth: 100,
+                      ),
+                      child: ParticipantsList(participants: party.participants),
+                    ),
                   ],
                 );
               } on TypeError {

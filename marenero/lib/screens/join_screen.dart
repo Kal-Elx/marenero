@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -22,8 +24,13 @@ class _JoinScreenState extends State<JoinScreen> {
         .where(fs.Party.code, isEqualTo: code)
         .get();
     if (partySnapshot.docs.isNotEmpty) {
+      var id = partySnapshot.docs.first.id;
+      await _firestore.collection(fs.Collection.parties).doc(id).update({
+        fs.Party.participants:
+            FieldValue.arrayUnion(['guest-${Random().nextInt(100)}'])
+      });
       setState(() {
-        _partyId = partySnapshot.docs.first.id;
+        _partyId = id;
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

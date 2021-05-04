@@ -12,7 +12,9 @@ class HostScreen extends StatelessWidget {
 
   /// Creates a party session on firestore.
   Future<String> createParty() async {
-    var docRef = await _firestore.collection(fs.Collection.parties).add({});
+    var docRef = await _firestore.collection(fs.Collection.parties).add({
+      fs.Party.participants: ['host'],
+    });
     return docRef.id;
   }
 

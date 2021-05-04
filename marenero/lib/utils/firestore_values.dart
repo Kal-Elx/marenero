@@ -5,4 +5,5 @@ class Collection {
 class Party {
   static const code = 'code';
   static const started = 'started';
+  static const participants = 'participants';
 }
