@@ -36,18 +36,21 @@ class Lobby extends StatelessWidget {
               var partyDocument = snapshot.data as DocumentSnapshot;
               try {
                 var party = Party.fromFirestoreObject(partyDocument);
-                return Column(
-                  children: [
-                    Code(party.code),
-                    Container(
-                      constraints: BoxConstraints(
-                        maxHeight: 500,
-                        maxWidth: 100,
-                      ),
-                      child: ParticipantsList(participants: party.participants),
-                    ),
-                  ],
-                );
+                return party.code.isNotEmpty
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Code(party.code),
+                          Container(
+                            constraints: BoxConstraints(
+                              maxHeight: 500,
+                            ),
+                            child: ParticipantsList(
+                                participants: party.participants),
+                          ),
+                        ],
+                      )
+                    : LoadingDisplay();
               } on TypeError {
                 //* Still loading. Waiting for cloud function to set values.
                 return LoadingDisplay();

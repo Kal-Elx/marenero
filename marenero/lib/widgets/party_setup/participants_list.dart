@@ -13,6 +13,7 @@ class ParticipantsList extends StatelessWidget {
         title: Text(
           participants[i],
           style: Theme.of(context).textTheme.bodyText1,
+          textAlign: TextAlign.center,
         ),
       ),
     );
