@@ -34,6 +34,9 @@ class Lobby extends StatelessWidget {
               return LoadingDisplay();
             case ConnectionState.active:
               var partyDocument = snapshot.data as DocumentSnapshot;
+              if (!partyDocument.exists) {
+                return PartyIsOverDisplay();
+              }
               try {
                 var party = Party.fromFirestoreObject(partyDocument);
                 return party.code.isNotEmpty
