@@ -12,6 +12,12 @@ The idea behind Marenero is the pre-party compatible “queueing game” where t
 Marenero takes inspiration from other semi-social mobile games such as Kahoot, Photo Roulette and Psych! where the participants – preferably in each other's presence – join a session led by a host. Before the start of the game, all participants can search for songs that are on Spotify (via the Web API, should not require being signed-in?) and select these as their contributions to the game. (Alternatively, perhaps, you could agree to log in with Spotify to get song suggestions based on what you are listening to most right now, or simply let the application choose songs for you.)
 All participants' song entries are collected, the order randomized, and they are placed on some kind of queue or list (the most suitable Web API solution). If not before, then about now the host would need to log in / give access to their Spotify account so that the music can be played and / or a playlist generated, etc. Then there will be a Kahoot-like competition in guessing (fastest?) who queued the currently playing song. There is room for point streaks and other fun stuff. And at the end, the winner and other fun statistics are presented.
 
+
 ## Development (technological)
 The preliminary idea is to develop Marenero using Flutter, a development kit for developing cross-platform applications for mobile, web and desktop with a single (Dart) code base. If Flutter is found insufficient, the back-up option is React based development.
 On the serverside there will be a serverless Firebase setup using Firestore and Cloud Functions together with Spotify’s Web API.
+
+
+## Mid-term screencast
+https://liuonline-my.sharepoint.com/:v:/g/personal/marwa361_student_liu_se/EVm5luJPN2NKjV-egyQaR6QB_pWfiKkDX8YL19OsL34k0w?e=z1bbsE
+("People in Linköpings universitet with the link can view")
