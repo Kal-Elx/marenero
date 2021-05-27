@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:marenero/models/track.dart';
+
 class ListDisplay extends StatefulWidget {
   final String spotifyAuthToken;
   ListDisplay({
@@ -13,7 +15,7 @@ class ListDisplay extends StatefulWidget {
 }
 
 class DyanmicList extends State<ListDisplay> {
-  List<String> litems = [];
+  List<Track> queriedTracks = [];
   final String spotifyAuthToken;
   final TextEditingController myController = TextEditingController();
 
@@ -38,17 +40,17 @@ class DyanmicList extends State<ListDisplay> {
   _queryTracks() async {
     if (myController.text.isNotEmpty) {
       String url =
-          "https://api.spotify.com/v1/search?q=${myController.text.replaceAll(' ', '%20')}&type=track&market=SE&limit=5";
+          "https://api.spotify.com/v1/search?q=${myController.text.replaceAll(' ', '%20')}&type=track&market=SE&limit=10";
       final response = await http.get(Uri.parse(url),
           headers: {'Authorization': 'Bearer ${this.spotifyAuthToken}'});
       final responseData = json.decode(response.body);
 
       setState(() {
         try {
-          final tracks = responseData['tracks']['items'] as List;
-          litems = tracks.map((t) => t['name'] as String).toList();
+          final trackObjects = responseData['tracks']['items'] as List;
+          queriedTracks = trackObjects.map((t) => Track.fromJson(t)).toList();
         } catch (error) {
-          litems.clear();
+          queriedTracks.clear();
         }
       });
     }
@@ -70,12 +72,13 @@ class DyanmicList extends State<ListDisplay> {
             maxHeight: MediaQuery.of(context).size.height / 3,
           ),
           child: ListView.builder(
-            itemCount: litems.length,
-            itemBuilder: (_, i) => ListTile(
-              title: Text(
-                litems[i],
-                style: Theme.of(context).textTheme.bodyText1,
-                textAlign: TextAlign.center,
+            itemCount: queriedTracks.length,
+            itemBuilder: (_, i) => Card(
+              child: ListTile(
+                //leading: FlutterLogo(size: 72.0), TODO: Album cover image?
+                title: Text(queriedTracks[i].name),
+                subtitle: Text(queriedTracks[i].artists.join(', ')),
+                trailing: Icon(Icons.add),
               ),
             ),
           ),
