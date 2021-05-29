@@ -7,22 +7,23 @@ import 'package:marenero/utils/spotify_api.dart';
 class SearchTracks extends StatefulWidget {
   final String spotifyAuthToken;
   final String userid;
-  SearchTracks({required this.spotifyAuthToken, required this.userid});
+  final Function(MyTrack) callback;
+
+  SearchTracks(
+      {required this.spotifyAuthToken,
+      required this.userid,
+      required this.callback});
 
   @override
-  State createState() =>
-      _SearchTracksState(spotifyAuthToken: spotifyAuthToken, userid: userid);
+  State createState() => _SearchTracksState();
 }
 
 class _SearchTracksState extends State<SearchTracks> {
-  final String spotifyAuthToken;
-  final String userid;
-
   List<MyTrack> searchedTracks = [];
 
   final TextEditingController myController = TextEditingController();
 
-  _SearchTracksState({required this.spotifyAuthToken, required this.userid});
+  _SearchTracksState();
 
   @override
   void initState() {
@@ -40,15 +41,14 @@ class _SearchTracksState extends State<SearchTracks> {
 
   _searchTracks() async {
     if (myController.text.isNotEmpty) {
-      setState(() async {
-        searchedTracks =
-            await searchTracks(this.spotifyAuthToken, myController.text);
-      });
+      searchedTracks =
+          await searchTracks(widget.spotifyAuthToken, myController.text);
+      setState(() {});
     }
   }
 
-  _selectTrack(MyTrack track) {
-    print("User with ID \"${this.userid}\" selected track: ${track.name}.");
+  _selectTrack(int i) {
+    widget.callback(searchedTracks[i]);
   }
 
   @override
@@ -63,21 +63,21 @@ class _SearchTracksState extends State<SearchTracks> {
           controller: myController,
         ),
         ListView.builder(
-          itemCount: searchedTracks.length,
-          shrinkWrap: true,
-          itemBuilder: (_, i) => Card(
-            child: ListTile(
-              //leading: FlutterLogo(size: 72.0), TODO: Album cover image?
-              title: Text(searchedTracks[i].name),
-              subtitle: Text(searchedTracks[i].artists.join(', ')),
-              trailing: IconButton(
-                icon: Icon(Icons.add),
-                color: Colors.white,
-                onPressed: () => _selectTrack(searchedTracks[i]),
-              ),
-            ),
-          ),
-        ),
+            itemCount: searchedTracks.length,
+            shrinkWrap: true,
+            itemBuilder: (_, i) => Card(
+                color: Colors.lightGreen,
+                child: ListTile(
+                  key: Key(searchedTracks[i].spotifyURI),
+                  //leading: FlutterLogo(size: 72.0), TODO: Album cover image?
+                  title: Text(searchedTracks[i].name),
+                  subtitle: Text(searchedTracks[i].artists.join(', ')),
+                  trailing: IconButton(
+                    icon: Icon(Icons.add),
+                    color: Colors.white,
+                    onPressed: () => _selectTrack(i),
+                  ),
+                ))),
       ],
     );
   }
