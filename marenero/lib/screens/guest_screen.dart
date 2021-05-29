@@ -5,12 +5,15 @@ import '../utils/firestore_values.dart' as fs;
 import '../widgets/party_builder.dart';
 import '../widgets/party_app_bar_title.dart';
 import '../widgets/participants_list.dart';
+import '../widgets/selects_tracks_button.dart';
 
 class GuestScreen extends StatefulWidget {
   final String partyId;
+  final String userId;
 
   const GuestScreen({
     required this.partyId,
+    required this.userId,
   });
 
   @override
@@ -28,9 +31,9 @@ class _GuestScreenState extends State<GuestScreen> {
 
   /// Removes the user from the party when the user leaves.
   void _cleanUp() {
-    // _firestore.collection(fs.Collection.parties).doc(_partyId).update({
-    //   fs.Party.participants: FieldValue.arrayRemove([_userId])
-    // });
+    _firestore.collection(fs.Collection.parties).doc(widget.partyId).update({
+      fs.Party.participants: FieldValue.arrayRemove([widget.userId])
+    });
   }
 
   @override
@@ -40,6 +43,10 @@ class _GuestScreenState extends State<GuestScreen> {
       builder: (context, party) => Scaffold(
         appBar: AppBar(
           title: PartyAppBarTitle(party.code),
+        ),
+        floatingActionButton: SelectTracksButton(
+          partyId: party.id,
+          userId: widget.userId,
         ),
         body: Column(
           children: [

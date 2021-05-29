@@ -21,20 +21,21 @@ class _JoinPartyScreenState extends State<JoinPartyScreen> {
 
   Future<void> _findParty({
     required String code,
-    required void Function(String partyId) onFoundParty,
+    required void Function(String partyId, String userId) onFoundParty,
   }) async {
     final partySnapshot = await _firestore
         .collection(fs.Collection.parties)
         .where(fs.Party.code, isEqualTo: code)
         .get();
     if (partySnapshot.docs.isNotEmpty) {
-      var id = partySnapshot.docs.first.id;
-      await _firestore.collection(fs.Collection.parties).doc(id).update({
+      var partyId = partySnapshot.docs.first.id;
+      final user = Participant(name: _username);
+      await _firestore.collection(fs.Collection.parties).doc(partyId).update({
         fs.Party.participants: FieldValue.arrayUnion(
-          [Participant(name: _username).toFirestoreObject()],
+          [user.toFirestoreObject()],
         )
       });
-      onFoundParty(id);
+      onFoundParty(partyId, user.id);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('There is no party with that code. Try again.')),
@@ -53,10 +54,13 @@ class _JoinPartyScreenState extends State<JoinPartyScreen> {
           child: CodeInput(
             onComplete: (code) => _findParty(
               code: code,
-              onFoundParty: (partyId) {
+              onFoundParty: (partyId, userId) {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (_) => GuestScreen(partyId: partyId),
+                    builder: (_) => GuestScreen(
+                      partyId: partyId,
+                      userId: userId,
+                    ),
                   ),
                 );
               },

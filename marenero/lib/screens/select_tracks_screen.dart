@@ -5,13 +5,12 @@ import 'package:marenero/widgets/select_tracks/search_tracks.dart';
 import 'package:marenero/widgets/select_tracks/selected_tracks_list.dart';
 
 class SelectTracksScreen extends StatefulWidget {
-  final String spotifyAuthToken;
-  final String code;
-  final int participants;
-  SelectTracksScreen({
-    required this.spotifyAuthToken,
-    required this.code,
-    required this.participants,
+  final String partyId;
+  final String userId;
+
+  const SelectTracksScreen({
+    required this.partyId,
+    required this.userId,
   });
 
   @override
@@ -30,11 +29,11 @@ class _SelectTracksScreenState extends State<SelectTracksScreen> {
           title: Column(
             children: [
               Text(
-                widget.code,
+                'code', // TODO: Fix me
                 style: Theme.of(context).textTheme.headline1,
               ),
               Text(
-                '${widget.participants} party people',
+                '${1 + 1} party people', // TODO: Fix me
                 style: Theme.of(context).textTheme.bodyText2,
               ),
             ],
@@ -65,8 +64,9 @@ class _SelectTracksScreenState extends State<SelectTracksScreen> {
                     maxHeight: screenSize.height / 3,
                   ),
                   child: SearchTracks(
-                    spotifyAuthToken: widget.spotifyAuthToken,
-                    userid: "lostboy1",
+                    // TODO: Fix me
+                    spotifyAuthToken: 'widget.spotifyAuthToken',
+                    userid: widget.userId,
                   ),
                 )
               ],

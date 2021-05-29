@@ -17,7 +17,7 @@ class ParticipantsList extends StatelessWidget {
     return Column(
       children: [
         AutoSizeText(
-          'Your friends',
+          'Party people',
           maxLines: 1,
           style: Theme.of(context).textTheme.headline3,
         ),
