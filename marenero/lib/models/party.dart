@@ -4,16 +4,18 @@ import '../utils/firestore_values.dart' as fs;
 import '../models/participant.dart';
 
 class Party {
-  String id;
-  String code;
-  String spotifyToken;
-  List<Participant> participants;
+  final String id;
+  final String code;
+  final String spotifyToken;
+  final List<Participant> participants;
+  final int songsToQueue;
 
   Party({
     required this.id,
     required this.code,
     required this.spotifyToken,
     required this.participants,
+    required this.songsToQueue,
   });
 
   /// Creates an instance from a Firestore object.
@@ -26,6 +28,7 @@ class Party {
       participants: (data[fs.Party.participants] as List)
           .map((data) => Participant.fromFirestoreObject(data))
           .toList(),
+      songsToQueue: data[fs.Party.songsToQueue],
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
+import 'package:marenero/widgets/party_settings.dart';
 import 'dart:convert';
 
 import '../widgets/party_builder.dart';
@@ -42,6 +43,7 @@ class _HostScreenState extends State<HostScreen> {
     var docRef = await _firestore.collection(fs.Collection.parties).add({
       fs.Party.spotifyToken: spotifyAuthToken,
       fs.Party.participants: [participant.toFirestoreObject()],
+      fs.Party.songsToQueue: 3,
     });
     _partyId = docRef.id;
     return docRef.id;
@@ -83,11 +85,22 @@ class _HostScreenState extends State<HostScreen> {
               ),
               body: Column(
                 children: [
+                  PartySettings(
+                    selected: party.songsToQueue,
+                    onSelect: (selected) {
+                      _firestore
+                          .collection(fs.Collection.parties)
+                          .doc(partyId)
+                          .update(
+                        {fs.Party.songsToQueue: selected},
+                      );
+                    },
+                  ),
                   Divider(),
                   Expanded(
                     child: ParticipantsList(
                       participants: party.participants,
-                      songsToQueue: 3,
+                      songsToQueue: party.songsToQueue,
                     ),
                   ),
                 ],
