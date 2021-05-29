@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../widgets/party_builder.dart';
-import '../widgets/participants_list.dart';
 import 'error_screen.dart';
 import 'loading_screen.dart';
 import '../utils/spotify_api.dart';
