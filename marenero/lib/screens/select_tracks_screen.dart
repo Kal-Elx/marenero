@@ -30,8 +30,6 @@ class _SelectTracksScreenState extends State<SelectTracksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-
     return PartyBuilder(
       partyId: widget.partyId,
       builder: (context, party) => Scaffold(
@@ -49,38 +47,22 @@ class _SelectTracksScreenState extends State<SelectTracksScreen> {
             ],
           ),
         ),
-        body: Container(
-          width: screenSize.width,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              // Selected tracks:
-              Column(
-                children: [
-                  Text("SELECT YOUR BANGERS:"),
-                  Container(
-                    // TODO: Make this a StreamBuilder, or stateful.
-                    constraints: BoxConstraints(
-                      maxHeight: screenSize.height / 3,
-                    ),
-                    child:
-                        SelectedTracksList(tracks: selected, songsToQueue: 3),
-                  ),
-                ],
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("SELECT YOUR BANGERS:"),
+            SelectedTracksList(
+              tracks: selected,
+              songsToQueue: party.songsToQueue,
+            ),
+            Expanded(
+              child: SearchTracks(
+                spotifyAuthToken: party.spotifyToken,
+                userid: widget.userId,
+                callback: callback,
               ),
-
-              // Search tracks:
-              Container(
-                constraints: BoxConstraints(
-                  maxHeight: screenSize.height / 3,
-                ),
-                child: SearchTracks(
-                    spotifyAuthToken: party.spotifyToken,
-                    userid: "lostboy1",
-                    callback: callback),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
