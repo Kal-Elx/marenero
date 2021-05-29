@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:marenero/models/participant.dart';
 import 'package:marenero/screens/guest_screen.dart';
 
 import '../widgets/code_input.dart';
@@ -16,7 +17,7 @@ class JoinPartyScreen extends StatefulWidget {
 
 class _JoinPartyScreenState extends State<JoinPartyScreen> {
   final _firestore = FirebaseFirestore.instance;
-  String _userId = 'guest-${Random().nextInt(100)}';
+  final _username = 'guest-${Random().nextInt(100)}';
 
   Future<void> _findParty({
     required String code,
@@ -29,7 +30,9 @@ class _JoinPartyScreenState extends State<JoinPartyScreen> {
     if (partySnapshot.docs.isNotEmpty) {
       var id = partySnapshot.docs.first.id;
       await _firestore.collection(fs.Collection.parties).doc(id).update({
-        fs.Party.participants: FieldValue.arrayUnion([_userId])
+        fs.Party.participants: FieldValue.arrayUnion(
+          [Participant(name: _username).toFirestoreObject()],
+        )
       });
       onFoundParty(id);
     } else {

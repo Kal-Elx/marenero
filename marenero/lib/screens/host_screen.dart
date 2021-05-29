@@ -4,10 +4,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../widgets/party_builder.dart';
+<<<<<<< HEAD
+=======
+import '../widgets/participants_list.dart';
+import '../models/participant.dart';
+>>>>>>> feat: participants model
 import 'error_screen.dart';
 import 'loading_screen.dart';
 import '../utils/spotify_api.dart';
 import '../utils/firestore_values.dart' as fs;
+import '../widgets/party_app_bar_title.dart';
 
 class HostScreen extends StatefulWidget {
   static const routeName = '/host';
@@ -18,8 +24,8 @@ class HostScreen extends StatefulWidget {
 
 class _HostScreenState extends State<HostScreen> {
   final _firestore = FirebaseFirestore.instance;
-  late final String _spotifyAuthToken;
-  late final String _displayName;
+  late final String spotifyAuthToken;
+  late final String displayName;
   String? _partyId;
 
   @override
@@ -30,11 +36,12 @@ class _HostScreenState extends State<HostScreen> {
 
   /// Authenticates Spotify user and creates a party session on firestore.
   Future<String> _createParty() async {
-    _spotifyAuthToken = await getAuthenticationToken();
-    _displayName = await _getDisplayName();
+    spotifyAuthToken = await getAuthenticationToken();
+    displayName = await _getDisplayName();
+    final participant = Participant(name: displayName, host: true);
 
     var docRef = await _firestore.collection(fs.Collection.parties).add({
-      fs.Party.participants: [_displayName],
+      fs.Party.participants: [participant.toFirestoreObject()],
     });
     _partyId = docRef.id;
     return docRef.id;
@@ -44,14 +51,13 @@ class _HostScreenState extends State<HostScreen> {
   Future<String> _getDisplayName() async {
     String url = "https://api.spotify.com/v1/me";
     final response = await http.get(Uri.parse(url),
-        headers: {'Authorization': 'Bearer $_spotifyAuthToken'});
+        headers: {'Authorization': 'Bearer $spotifyAuthToken'});
     var responseData = json.decode(response.body);
     return responseData["display_name"];
   }
 
   /// Deletes the current party when the host leaves.
   void _cleanUp() {
-    print('Cleaning up');
     if (_partyId != null) {
       _firestore.collection(fs.Collection.parties).doc(_partyId).delete();
     }
@@ -68,8 +74,20 @@ class _HostScreenState extends State<HostScreen> {
           return PartyBuilder(
             partyId: partyId,
             builder: (context, party) => Scaffold(
-              appBar: AppBar(title: Text(party.code)),
-              body: Container(),
+              appBar: AppBar(
+                title: PartyAppBarTitle(party.code),
+              ),
+              body: Column(
+                children: [
+                  Divider(),
+                  Expanded(
+                    child: ParticipantsList(
+                      participants: party.participants,
+                      songsToQueue: 3,
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         } else if (snapshot.hasError) {

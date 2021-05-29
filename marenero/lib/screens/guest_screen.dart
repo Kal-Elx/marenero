@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/firestore_values.dart' as fs;
 
 import '../widgets/party_builder.dart';
+import '../widgets/party_app_bar_title.dart';
+import '../widgets/participants_list.dart';
 
 class GuestScreen extends StatefulWidget {
   final String partyId;
@@ -37,7 +39,18 @@ class _GuestScreenState extends State<GuestScreen> {
       partyId: widget.partyId,
       builder: (context, party) => Scaffold(
         appBar: AppBar(
-          title: Text(party.code),
+          title: PartyAppBarTitle(party.code),
+        ),
+        body: Column(
+          children: [
+            Divider(),
+            Expanded(
+              child: ParticipantsList(
+                participants: party.participants,
+                songsToQueue: 3,
+              ),
+            ),
+          ],
         ),
       ),
     );
