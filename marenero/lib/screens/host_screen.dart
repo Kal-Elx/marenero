@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../widgets/party_setup/lobby.dart';
-import '../widgets/search_tracks/search_tracks.dart';
-import '../widgets/information/error_display.dart';
-import '../widgets/information/loading_display.dart';
+import '../widgets/party_builder.dart';
+import '../widgets/participants_list.dart';
+import 'error_screen.dart';
+import 'loading_screen.dart';
 import '../utils/spotify_api.dart';
 import '../utils/firestore_values.dart' as fs;
 
@@ -60,36 +60,26 @@ class _HostScreenState extends State<HostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
+    return FutureBuilder(
+      future: _createParty(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var partyId = snapshot.data.toString();
 
-    return Scaffold(
-      body: Container(
-        width: screenSize.width,
-        child: FutureBuilder(
-          future: _createParty(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var partyId = snapshot.data.toString();
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Lobby(partyId: partyId),
-                  ListDisplay(spotifyAuthToken: _spotifyAuthToken),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Start the party'),
-                  ),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              print(snapshot.error);
-              return ErrorDisplay();
-            } else {
-              return LoadingDisplay();
-            }
-          },
-        ),
-      ),
+          return PartyBuilder(
+            partyId: partyId,
+            builder: (context, party) => Scaffold(
+              appBar: AppBar(title: Text(party.code)),
+              body: Container(),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          print(snapshot.error);
+          return ErrorScreen();
+        } else {
+          return LoadingScreen();
+        }
+      },
     );
   }
 }

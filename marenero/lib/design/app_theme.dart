@@ -11,7 +11,17 @@ class AppTheme {
       primaryColorDark: Colors.black,
       indicatorColor: Colors.white,
       canvasColor: Colors.black,
-      appBarTheme: AppBarTheme(brightness: Brightness.dark),
+      appBarTheme: AppBarTheme(
+        brightness: Brightness.dark,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontSize: 20.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
       textTheme: GoogleFonts.latoTextTheme().copyWith(
         //* Heading
         headline1: TextStyle(
