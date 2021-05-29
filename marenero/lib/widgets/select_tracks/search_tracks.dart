@@ -62,22 +62,23 @@ class _SearchTracksState extends State<SearchTracks> {
           style: Theme.of(context).textTheme.bodyText1,
           controller: myController,
         ),
-        ListView.builder(
-            itemCount: searchedTracks.length,
-            shrinkWrap: true,
-            itemBuilder: (_, i) => Card(
-                color: Colors.lightGreen,
-                child: ListTile(
-                  key: Key(searchedTracks[i].spotifyURI),
-                  //leading: FlutterLogo(size: 72.0), TODO: Album cover image?
-                  title: Text(searchedTracks[i].name),
-                  subtitle: Text(searchedTracks[i].artists.join(', ')),
-                  trailing: IconButton(
-                    icon: Icon(Icons.add),
-                    color: Colors.white,
-                    onPressed: () => _selectTrack(i),
-                  ),
-                ))),
+        Expanded(
+          child: ListView.builder(
+              itemCount: searchedTracks.length,
+              itemBuilder: (_, i) => Card(
+                  color: Colors.lightGreen,
+                  child: ListTile(
+                    key: Key(searchedTracks[i].spotifyURI),
+                    //leading: FlutterLogo(size: 72.0), TODO: Album cover image?
+                    title: Text(searchedTracks[i].name),
+                    subtitle: Text(searchedTracks[i].artists.join(', ')),
+                    trailing: IconButton(
+                      icon: Icon(Icons.add),
+                      color: Colors.white,
+                      onPressed: () => _selectTrack(i),
+                    ),
+                  ))),
+        ),
       ],
     );
   }
