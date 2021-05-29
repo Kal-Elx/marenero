@@ -45,3 +45,11 @@ Future<List<MyTrack>> searchTracks(String spotifyAuthToken, String input,
 
   return searchedTracks;
 }
+
+Future<bool> queueTrack(String spotifyAuthToken, MyTrack track) async {
+  String url = "https://api.spotify.com/v1/me/player/queue";
+  final response = await http.post(Uri.parse(url),
+      headers: {'Authorization': 'Bearer $spotifyAuthToken'},
+      body: {'uri': '${track.spotifyURI}'});
+  return response.statusCode == 200;
+}
