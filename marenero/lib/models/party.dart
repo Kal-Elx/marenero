@@ -6,11 +6,13 @@ import '../models/participant.dart';
 class Party {
   String id;
   String code;
+  String spotifyToken;
   List<Participant> participants;
 
   Party({
     required this.id,
     required this.code,
+    required this.spotifyToken,
     required this.participants,
   });
 
@@ -20,6 +22,7 @@ class Party {
     return Party(
       id: snapshot.id,
       code: data[fs.Party.code],
+      spotifyToken: data[fs.Party.spotifyToken],
       participants: (data[fs.Party.participants] as List)
           .map((data) => Participant.fromFirestoreObject(data))
           .toList(),

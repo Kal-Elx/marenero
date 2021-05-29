@@ -7,6 +7,7 @@ class Party {
   const Party._();
   static const code = 'code';
   static const participants = 'participants';
+  static const spotifyToken = 'spotify_token';
 }
 
 class Participant {

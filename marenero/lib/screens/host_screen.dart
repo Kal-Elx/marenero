@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
-import 'package:marenero/screens/select_tracks_screen.dart';
 import 'dart:convert';
 
 import '../widgets/party_builder.dart';
@@ -12,6 +11,7 @@ import 'loading_screen.dart';
 import '../utils/spotify_api.dart';
 import '../utils/firestore_values.dart' as fs;
 import '../widgets/party_app_bar_title.dart';
+import '../widgets/selects_tracks_button.dart';
 
 class HostScreen extends StatefulWidget {
   static const routeName = '/host';
@@ -22,8 +22,7 @@ class HostScreen extends StatefulWidget {
 
 class _HostScreenState extends State<HostScreen> {
   final _firestore = FirebaseFirestore.instance;
-  late final String spotifyAuthToken;
-  late final String displayName;
+  late final Participant participant;
   String? _partyId;
 
   @override
@@ -34,11 +33,14 @@ class _HostScreenState extends State<HostScreen> {
 
   /// Authenticates Spotify user and creates a party session on firestore.
   Future<String> _createParty() async {
-    spotifyAuthToken = await getAuthenticationToken();
-    displayName = await _getDisplayName();
-    final participant = Participant(name: displayName, host: true);
+    final spotifyAuthToken = await getAuthenticationToken();
+    participant = Participant(
+      name: await _getDisplayName(spotifyAuthToken),
+      host: true,
+    );
 
     var docRef = await _firestore.collection(fs.Collection.parties).add({
+      fs.Party.spotifyToken: spotifyAuthToken,
       fs.Party.participants: [participant.toFirestoreObject()],
     });
     _partyId = docRef.id;
@@ -46,10 +48,10 @@ class _HostScreenState extends State<HostScreen> {
   }
 
   /// Returns the display name of the current Spotify user.
-  Future<String> _getDisplayName() async {
+  Future<String> _getDisplayName(String token) async {
     String url = "https://api.spotify.com/v1/me";
-    final response = await http.get(Uri.parse(url),
-        headers: {'Authorization': 'Bearer $spotifyAuthToken'});
+    final response = await http
+        .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
     var responseData = json.decode(response.body);
     return responseData["display_name"];
   }
@@ -75,19 +77,9 @@ class _HostScreenState extends State<HostScreen> {
               appBar: AppBar(
                 title: PartyAppBarTitle(party.code),
               ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => SelectTracksScreen(
-                        spotifyAuthToken: spotifyAuthToken,
-                        code: party.code,
-                        participants: party.participants.length,
-                      ),
-                    ),
-                  );
-                },
-                child: const Icon(Icons.search),
+              floatingActionButton: SelectTracksButton(
+                partyId: partyId,
+                userId: participant.id,
               ),
               body: Column(
                 children: [
