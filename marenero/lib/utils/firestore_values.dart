@@ -8,6 +8,7 @@ class Party {
   static const code = 'code';
   static const participants = 'participants';
   static const spotifyToken = 'spotify_token';
+  static const songsToQueue = 'songs_to_queue';
 }
 
 class Participant {
