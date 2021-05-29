@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
+import 'package:marenero/screens/select_tracks_screen.dart';
 import 'dart:convert';
 
 import '../widgets/party_builder.dart';
-<<<<<<< HEAD
-=======
 import '../widgets/participants_list.dart';
 import '../models/participant.dart';
->>>>>>> feat: participants model
 import 'error_screen.dart';
 import 'loading_screen.dart';
 import '../utils/spotify_api.dart';
@@ -76,6 +74,20 @@ class _HostScreenState extends State<HostScreen> {
             builder: (context, party) => Scaffold(
               appBar: AppBar(
                 title: PartyAppBarTitle(party.code),
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => SelectTracksScreen(
+                        spotifyAuthToken: spotifyAuthToken,
+                        code: party.code,
+                        participants: party.participants.length,
+                      ),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.search),
               ),
               body: Column(
                 children: [

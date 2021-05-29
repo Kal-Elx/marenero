@@ -3,13 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:marenero/models/my_track.dart';
 import 'package:marenero/widgets/select_tracks/search_tracks.dart';
 import 'package:marenero/widgets/select_tracks/selected_tracks_list.dart';
-import 'package:spotify_sdk/models/track.dart';
 
-class SelectTracksScreen extends StatelessWidget {
+class SelectTracksScreen extends StatefulWidget {
   final String spotifyAuthToken;
+  final String code;
+  final int participants;
   SelectTracksScreen({
     required this.spotifyAuthToken,
+    required this.code,
+    required this.participants,
   });
+
+  @override
+  State<SelectTracksScreen> createState() => _SelectTracksScreenState();
+}
+
+class _SelectTracksScreenState extends State<SelectTracksScreen> {
   List<MyTrack> selected = [];
 
   @override
@@ -17,6 +26,20 @@ class SelectTracksScreen extends StatelessWidget {
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
+        appBar: AppBar(
+          title: Column(
+            children: [
+              Text(
+                widget.code,
+                style: Theme.of(context).textTheme.headline1,
+              ),
+              Text(
+                '${widget.participants} party people',
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+            ],
+          ),
+        ),
         body: Container(
             width: screenSize.width,
             child: Column(
@@ -38,11 +61,14 @@ class SelectTracksScreen extends StatelessWidget {
 
                 // Search tracks:
                 Container(
-                    constraints: BoxConstraints(
-                      maxHeight: screenSize.height / 3,
-                    ),
-                    child: SearchTracks(
-                        spotifyAuthToken: spotifyAuthToken, userid: "lostboy1"))
+                  constraints: BoxConstraints(
+                    maxHeight: screenSize.height / 3,
+                  ),
+                  child: SearchTracks(
+                    spotifyAuthToken: widget.spotifyAuthToken,
+                    userid: "lostboy1",
+                  ),
+                )
               ],
             )));
   }
