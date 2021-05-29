@@ -16,21 +16,22 @@ class AppTheme {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: TextStyle(
-          fontSize: 20.0,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
       ),
       textTheme: GoogleFonts.latoTextTheme().copyWith(
         //* Heading
         headline1: TextStyle(
-          fontSize: 25.0,
+          fontSize: 30.0,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
         //* Text Heading
         headline2: TextStyle(
+          fontSize: 25.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        //* Text Subheading
+        headline3: TextStyle(
           fontSize: 20.0,
           fontWeight: FontWeight.bold,
           color: Colors.white,
