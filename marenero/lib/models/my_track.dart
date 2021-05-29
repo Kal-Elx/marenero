@@ -1,21 +1,21 @@
 // See also: https://developer.spotify.com/documentation/web-api/reference/#object-trackobject
-class Track {
+class MyTrack {
   final String spotifyURI;
   final String name;
   final List<String> artists;
 
-  Track({
+  MyTrack({
     required this.spotifyURI,
     required this.name,
     required this.artists,
   });
 
-  factory Track.fromJson(Map<String, dynamic> trackObject) {
+  factory MyTrack.fromJson(Map<String, dynamic> trackObject) {
     List<String> artists = [];
     for (Map<String, dynamic> artistObject in trackObject['artists'] as List) {
       artists.add(artistObject['name'] as String);
     }
-    return Track(
+    return MyTrack(
       spotifyURI: trackObject['uri'] as String,
       name: trackObject['name'] as String,
       artists: artists,
