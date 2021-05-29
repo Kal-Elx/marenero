@@ -21,10 +21,16 @@ class SelectTracksScreen extends StatefulWidget {
 class _SelectTracksScreenState extends State<SelectTracksScreen> {
   List<MyTrack> selected = [];
 
-  callback(selectedTrack) {
+  addSelectedCallback(selectedTrack) {
     setState(() {
       selected.add(selectedTrack);
       // TODO: Add to Firebase.
+    });
+  }
+
+  removeSelectedCallback(selectedTrack) {
+    setState(() {
+      selected.remove(selectedTrack);
     });
   }
 
@@ -54,12 +60,13 @@ class _SelectTracksScreenState extends State<SelectTracksScreen> {
             SelectedTracksList(
               tracks: selected,
               songsToQueue: party.songsToQueue,
+              removeSelectedCallback: removeSelectedCallback,
             ),
             Expanded(
               child: SearchTracks(
                 spotifyAuthToken: party.spotifyToken,
                 userid: widget.userId,
-                callback: callback,
+                selectTrackCallback: addSelectedCallback,
               ),
             ),
           ],

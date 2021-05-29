@@ -7,12 +7,12 @@ import 'package:marenero/utils/spotify_api.dart';
 class SearchTracks extends StatefulWidget {
   final String spotifyAuthToken;
   final String userid;
-  final Function(MyTrack) callback;
+  final Function(MyTrack) selectTrackCallback;
 
   SearchTracks(
       {required this.spotifyAuthToken,
       required this.userid,
-      required this.callback});
+      required this.selectTrackCallback});
 
   @override
   State createState() => _SearchTracksState();
@@ -48,7 +48,7 @@ class _SearchTracksState extends State<SearchTracks> {
   }
 
   _selectTrack(int i) {
-    widget.callback(searchedTracks[i]);
+    widget.selectTrackCallback(searchedTracks[i]);
   }
 
   @override

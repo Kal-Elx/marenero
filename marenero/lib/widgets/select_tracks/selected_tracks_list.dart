@@ -5,8 +5,16 @@ import 'package:marenero/models/my_track.dart';
 class SelectedTracksList extends StatelessWidget {
   final List<MyTrack> tracks;
   final int songsToQueue;
+  final Function(MyTrack) removeSelectedCallback;
 
-  SelectedTracksList({required this.tracks, required this.songsToQueue});
+  SelectedTracksList(
+      {required this.tracks,
+      required this.songsToQueue,
+      required this.removeSelectedCallback});
+
+  _removeTrack(int i) {
+    removeSelectedCallback(tracks[i]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +28,11 @@ class SelectedTracksList extends StatelessWidget {
                 //leading: FlutterLogo(size: 72.0), TODO: Album cover image?
                 title: Text(tracks[i].name),
                 subtitle: Text(tracks[i].artists.join(', ')),
-                trailing: Icon(Icons.remove_circle),
+                trailing: IconButton(
+                  icon: Icon(Icons.remove),
+                  color: Colors.white,
+                  onPressed: () => _removeTrack(i),
+                ),
               )
             : ListTile(),
       ),
