@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'design/app_theme.dart';
 import 'screens/home_screen.dart';
 import 'screens/host_screen.dart';
-import 'screens/join_screen.dart';
+import 'screens/join_party_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       home: HomeScreen(),
       routes: {
         HostScreen.routeName: (ctx) => HostScreen(),
-        JoinScreen.routeName: (ctx) => JoinScreen(),
+        JoinPartyScreen.routeName: (ctx) => JoinPartyScreen(),
       },
     );
   }

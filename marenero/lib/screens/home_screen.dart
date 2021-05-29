@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'host_screen.dart';
-import 'join_screen.dart';
+import 'join_party_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(JoinScreen.routeName);
+                Navigator.of(context).pushNamed(JoinPartyScreen.routeName);
               },
               child: Text('Join party'),
             ),
