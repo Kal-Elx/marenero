@@ -6,6 +6,7 @@ import '../widgets/party_builder.dart';
 import '../widgets/party_app_bar_title.dart';
 import '../widgets/participants_list.dart';
 import '../widgets/selects_tracks_button.dart';
+import '../widgets/rounded_divider.dart';
 
 class GuestScreen extends StatefulWidget {
   final String partyId;
@@ -48,16 +49,20 @@ class _GuestScreenState extends State<GuestScreen> {
           partyId: party.id,
           userId: widget.userId,
         ),
-        body: Column(
-          children: [
-            Divider(),
-            Expanded(
-              child: ParticipantsList(
-                participants: party.participants,
-                songsToQueue: 3,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+          child: Column(
+            children: [
+              RoundedDivider(),
+              Expanded(
+                child: ParticipantsList(
+                  participants: party.participants,
+                  tracks: party.queuedTracks,
+                  songsToQueue: party.songsToQueue,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -9,6 +9,7 @@ class Party {
   static const participants = 'participants';
   static const spotifyToken = 'spotify_token';
   static const songsToQueue = 'songs_to_queue';
+  static const queuedTracks = 'tracks';
 }
 
 class Participant {
@@ -16,5 +17,12 @@ class Participant {
   static const id = 'id';
   static const name = 'name';
   static const host = 'host';
-  static const queuedTracks = 'queued_tracks';
+}
+
+class MyTrack {
+  const MyTrack._();
+  static const uri = 'uri';
+  static const name = 'name';
+  static const artists = 'artists';
+  static const uid = 'uid';
 }

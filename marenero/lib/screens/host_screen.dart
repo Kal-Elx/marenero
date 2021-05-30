@@ -13,6 +13,7 @@ import '../utils/spotify_api.dart';
 import '../utils/firestore_values.dart' as fs;
 import '../widgets/party_app_bar_title.dart';
 import '../widgets/selects_tracks_button.dart';
+import '../widgets/rounded_divider.dart';
 
 class HostScreen extends StatefulWidget {
   static const routeName = '/host';
@@ -83,27 +84,32 @@ class _HostScreenState extends State<HostScreen> {
                 partyId: partyId,
                 userId: participant.id,
               ),
-              body: Column(
-                children: [
-                  PartySettings(
-                    selected: party.songsToQueue,
-                    onSelect: (selected) {
-                      _firestore
-                          .collection(fs.Collection.parties)
-                          .doc(partyId)
-                          .update(
-                        {fs.Party.songsToQueue: selected},
-                      );
-                    },
-                  ),
-                  Divider(),
-                  Expanded(
-                    child: ParticipantsList(
-                      participants: party.participants,
-                      songsToQueue: party.songsToQueue,
+              body: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                child: Column(
+                  children: [
+                    RoundedDivider(),
+                    PartySettings(
+                      selected: party.songsToQueue,
+                      onSelect: (selected) {
+                        _firestore
+                            .collection(fs.Collection.parties)
+                            .doc(partyId)
+                            .update(
+                          {fs.Party.songsToQueue: selected},
+                        );
+                      },
                     ),
-                  ),
-                ],
+                    RoundedDivider(),
+                    Expanded(
+                      child: ParticipantsList(
+                        participants: party.participants,
+                        tracks: party.queuedTracks,
+                        songsToQueue: party.songsToQueue,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

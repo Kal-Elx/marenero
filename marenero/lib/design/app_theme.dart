@@ -17,6 +17,9 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
       ),
+      dividerTheme: DividerThemeData(
+        color: Colors.white24,
+      ),
       textTheme: GoogleFonts.latoTextTheme().copyWith(
         //* Heading
         headline1: TextStyle(
@@ -44,8 +47,7 @@ class AppTheme {
         //* Emphasised Ingress
         bodyText2: TextStyle(
           color: Colors.white,
-          fontSize: 15.0,
-          fontWeight: FontWeight.bold,
+          fontSize: 12.0,
         ),
       ),
     );

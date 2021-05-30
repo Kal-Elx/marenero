@@ -2,15 +2,31 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import '../models/participant.dart';
+import '../models/my_track.dart';
 
 class ParticipantsList extends StatelessWidget {
   final List<Participant> participants;
+  final List<MyTrack> tracks;
   final int songsToQueue;
 
   ParticipantsList({
     required this.participants,
+    required this.tracks,
     required this.songsToQueue,
   });
+
+  Widget _participantStatus(BuildContext context, String uid) {
+    final int queudSongs = tracks.where((track) => track.uid == uid).length;
+
+    if (queudSongs >= songsToQueue) {
+      return Icon(Icons.done);
+    } else {
+      return AutoSizeText(
+        '$queudSongs/$songsToQueue',
+        style: Theme.of(context).textTheme.bodyText1,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +46,7 @@ class ParticipantsList extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyText1,
                 textAlign: TextAlign.center,
               ),
-              trailing: AutoSizeText(
-                '${participants[i].queuedTracks.length}/$songsToQueue',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
+              trailing: _participantStatus(context, participants[i].id),
             ),
           ),
         ),

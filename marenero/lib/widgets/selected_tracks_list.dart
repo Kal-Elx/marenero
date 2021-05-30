@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marenero/models/my_track.dart';
+import 'package:marenero/widgets/track_list_tile.dart';
 //import 'package:spotify_sdk/models/track.dart';
 
 class SelectedTracksList extends StatelessWidget {
@@ -12,30 +13,30 @@ class SelectedTracksList extends StatelessWidget {
       required this.songsToQueue,
       required this.removeSelectedCallback});
 
-  _removeTrack(int i) {
-    removeSelectedCallback(tracks[i]);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
       itemCount: this.songsToQueue,
       shrinkWrap: true,
-      itemBuilder: (_, i) => Card(
-        color: Colors.lightGreen,
-        child: i < tracks.length
-            ? ListTile(
-                //leading: FlutterLogo(size: 72.0), TODO: Album cover image?
-                title: Text(tracks[i].name),
-                subtitle: Text(tracks[i].artists.join(', ')),
+      separatorBuilder: (_, __) => Divider(
+        thickness: 1.0,
+        color: Colors.white12,
+        height: 4.0,
+        indent: 4.0,
+      ),
+      itemBuilder: (_, i) {
+        return i < tracks.length
+            ? TrackListTile(
+                title: tracks[i].name,
+                artists: tracks[i].artists,
                 trailing: IconButton(
                   icon: Icon(Icons.remove),
                   color: Colors.white,
-                  onPressed: () => _removeTrack(i),
+                  onPressed: () => removeSelectedCallback(tracks[i]),
                 ),
               )
-            : ListTile(),
-      ),
+            : TrackListTile.placeholder(i);
+      },
     );
   }
 }
