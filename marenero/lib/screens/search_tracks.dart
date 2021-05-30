@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:marenero/models/my_track.dart';
 
-import 'package:marenero/utils/spotify_api.dart';
-//import 'package:spotify_sdk/models/track.dart';
+import '../models/my_track.dart';
+import '../utils/spotify_api.dart';
+import '../widgets/track_list_tile.dart';
 
 class SearchTracks extends StatefulWidget {
   final String spotifyAuthToken;
@@ -52,7 +52,7 @@ class _SearchTracksState extends State<SearchTracks> {
   }
 
   @override
-  Widget build(BuildContext ctxt) {
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
@@ -63,21 +63,19 @@ class _SearchTracksState extends State<SearchTracks> {
           controller: myController,
         ),
         Expanded(
-          child: ListView.builder(
-              itemCount: searchedTracks.length,
-              itemBuilder: (_, i) => Card(
-                  color: Colors.lightGreen,
-                  child: ListTile(
-                    key: Key(searchedTracks[i].spotifyURI),
-                    //leading: FlutterLogo(size: 72.0), TODO: Album cover image?
-                    title: Text(searchedTracks[i].name),
-                    subtitle: Text(searchedTracks[i].artists.join(', ')),
-                    trailing: IconButton(
-                      icon: Icon(Icons.add),
-                      color: Colors.white,
-                      onPressed: () => _selectTrack(i),
-                    ),
-                  ))),
+          child: ListView.separated(
+            separatorBuilder: (_, __) => Divider(),
+            itemCount: searchedTracks.length,
+            itemBuilder: (_, i) => TrackListTile(
+              title: searchedTracks[i].name,
+              artists: searchedTracks[i].artists,
+              trailing: IconButton(
+                icon: Icon(Icons.add),
+                color: Colors.white,
+                onPressed: () => _selectTrack(i),
+              ),
+            ),
+          ),
         ),
       ],
     );

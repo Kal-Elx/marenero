@@ -4,9 +4,10 @@ class ErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
         child: Text(
-          'Something went wrong.',
+          'Oh no, something went wrong',
           style: Theme.of(context).textTheme.headline2,
         ),
       ),

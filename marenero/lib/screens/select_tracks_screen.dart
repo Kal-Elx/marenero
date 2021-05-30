@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:marenero/models/my_track.dart';
-import 'package:marenero/widgets/party_builder.dart';
-import 'package:marenero/widgets/select_tracks/search_tracks.dart';
-import 'package:marenero/widgets/select_tracks/selected_tracks_list.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SelectTracksScreen extends StatefulWidget {
+import '../widgets/party_builder.dart';
+import 'search_tracks.dart';
+import '../widgets/selected_tracks_list.dart';
+import '../utils/firestore_values.dart' as fs;
+import '../models/my_track.dart';
+import '../widgets/rounded_divider.dart';
+
+class SelectTracksScreen extends StatelessWidget {
   final String partyId;
   final String userId;
 
@@ -14,64 +18,83 @@ class SelectTracksScreen extends StatefulWidget {
     required this.userId,
   });
 
-  @override
-  State<SelectTracksScreen> createState() => _SelectTracksScreenState();
-}
-
-class _SelectTracksScreenState extends State<SelectTracksScreen> {
-  List<MyTrack> selected = [];
-
-  addSelectedCallback(selectedTrack) {
-    setState(() {
-      selected.add(selectedTrack);
-      // TODO: Add to Firebase.
+  addSelectedCallback(MyTrack selectedTrack) {
+    selectedTrack.uid = userId;
+    FirebaseFirestore.instance
+        .collection(fs.Collection.parties)
+        .doc(partyId)
+        .update({
+      fs.Party.queuedTracks:
+          FieldValue.arrayUnion([selectedTrack.toFirestoreObject()])
     });
   }
 
-  removeSelectedCallback(selectedTrack) {
-    setState(() {
-      selected.remove(selectedTrack);
+  removeSelectedCallback(MyTrack selectedTrack) {
+    FirebaseFirestore.instance
+        .collection(fs.Collection.parties)
+        .doc(partyId)
+        .update({
+      fs.Party.queuedTracks:
+          FieldValue.arrayRemove([selectedTrack.toFirestoreObject()])
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return PartyBuilder(
-      partyId: widget.partyId,
-      builder: (context, party) => Scaffold(
-        appBar: AppBar(
-          title: Column(
-            children: [
-              Text(
-                party.code,
-                style: Theme.of(context).textTheme.headline1,
-              ),
-              Text(
-                '${party.participants.length} party people',
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-            ],
-          ),
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text("SELECT YOUR BANGERS:"),
-            SelectedTracksList(
-              tracks: selected,
-              songsToQueue: party.songsToQueue,
-              removeSelectedCallback: removeSelectedCallback,
-            ),
-            Expanded(
-              child: SearchTracks(
-                spotifyAuthToken: party.spotifyToken,
-                userid: widget.userId,
-                selectTrackCallback: addSelectedCallback,
+        partyId: partyId,
+        builder: (context, party) {
+          final selectedTracks =
+              party.queuedTracks.where((track) => track.uid == userId).toList();
+          return Scaffold(
+            appBar: AppBar(
+              title: Column(
+                children: [
+                  Text(
+                    party.code,
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                  Text(
+                    '${party.participants.length} party people',
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  RoundedDivider(),
+                  Text(
+                    party.songsToQueue == 1
+                        ? 'Select a banger'
+                        : 'Select ${party.songsToQueue} bangers',
+                    style: Theme.of(context).textTheme.headline3,
+                  ),
+                  SelectedTracksList(
+                    tracks: selectedTracks,
+                    songsToQueue: party.songsToQueue,
+                    removeSelectedCallback: removeSelectedCallback,
+                  ),
+                  RoundedDivider(),
+                  selectedTracks.length < party.songsToQueue
+                      ? Expanded(
+                          child: SearchTracks(
+                            spotifyAuthToken: party.spotifyToken,
+                            userid: userId,
+                            selectTrackCallback: addSelectedCallback,
+                          ),
+                        )
+                      : ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text('Return to the dance floor'),
+                        ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 }

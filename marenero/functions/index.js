@@ -51,7 +51,7 @@ function generateUniquePartyCode() {
 
 exports.setPartyID = functions.firestore.document("parties/{documentId}")
     .onCreate((snap, _) => {
-      const started = false;
+      const tracks = [];
       return generateUniquePartyCode().then(
-          (code) => snap.ref.set({code, started}, {merge: true}));
+          (code) => snap.ref.set({code, tracks}, {merge: true}));
     });
