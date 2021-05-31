@@ -7,7 +7,7 @@ class PartyIsOverScreen extends StatelessWidget {
       appBar: AppBar(),
       body: Center(
         child: Text(
-          'Sorry, this party is over\nShow up on time next time',
+          "Sorry, this party is over\nYou don't have to go home but you can't stay here",
           style: Theme.of(context).textTheme.headline2,
         ),
       ),
