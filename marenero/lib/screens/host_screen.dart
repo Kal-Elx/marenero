@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:marenero/widgets/party_settings.dart';
+import 'package:tap_debouncer/tap_debouncer.dart';
 import 'dart:convert';
 
 import '../widgets/party_builder.dart';
 import '../widgets/participants_list.dart';
 import '../models/participant.dart';
+import '../models/party.dart';
+import '../models/my_track.dart';
 import 'error_screen.dart';
 import 'loading_screen.dart';
 import '../utils/spotify_api.dart';
@@ -66,6 +69,18 @@ class _HostScreenState extends State<HostScreen> {
     }
   }
 
+  Future<void> queueAllSongs(Party party) async {
+    final tracks = party.queuedTracks;
+    tracks.shuffle();
+    for (final track in tracks) {
+      await queueTrack(party.spotifyToken, track);
+    }
+    await _firestore
+        .collection(fs.Collection.parties)
+        .doc(party.id)
+        .update({fs.Party.queuedTracks: []});
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -107,6 +122,18 @@ class _HostScreenState extends State<HostScreen> {
                         tracks: party.queuedTracks,
                         songsToQueue: party.songsToQueue,
                       ),
+                    ),
+                    RoundedDivider(),
+                    TapDebouncer(
+                      onTap: () async {
+                        await queueAllSongs(party);
+                      },
+                      builder: (_, onTap) {
+                        return OutlinedButton(
+                          onPressed: onTap,
+                          child: Text('Queue all songs'),
+                        );
+                      },
                     ),
                   ],
                 ),
