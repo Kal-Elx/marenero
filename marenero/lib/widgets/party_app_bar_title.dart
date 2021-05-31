@@ -14,6 +14,7 @@ class PartyAppBarTitle extends StatelessWidget {
           'Show this code to your friends',
           style: Theme.of(context).textTheme.bodyText2,
         ),
+        SizedBox(height: 8.0),
         Text(
           code,
           style: Theme.of(context).textTheme.headline1,

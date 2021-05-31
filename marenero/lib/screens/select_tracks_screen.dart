@@ -87,7 +87,7 @@ class SelectTracksScreen extends StatelessWidget {
                             selectTrackCallback: addSelectedCallback,
                           ),
                         )
-                      : ElevatedButton(
+                      : OutlinedButton(
                           onPressed: () => Navigator.of(context).pop(),
                           child: Text('Return to the dance floor'),
                         ),

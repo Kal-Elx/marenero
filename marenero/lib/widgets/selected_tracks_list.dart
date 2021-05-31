@@ -30,7 +30,7 @@ class SelectedTracksList extends StatelessWidget {
                 title: tracks[i].name,
                 artists: tracks[i].artists,
                 trailing: IconButton(
-                  icon: Icon(Icons.remove),
+                  icon: Icon(Icons.remove_circle_outline),
                   color: Colors.white,
                   onPressed: () => removeSelectedCallback(tracks[i]),
                 ),

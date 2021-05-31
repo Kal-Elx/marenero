@@ -46,6 +46,8 @@ class ParticipantsList extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyText1,
                 textAlign: TextAlign.center,
               ),
+              leading:
+                  Icon(participants[i].host ? Icons.music_note_outlined : null),
               trailing: _participantStatus(context, participants[i].id),
             ),
           ),

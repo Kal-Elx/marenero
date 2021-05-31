@@ -70,7 +70,7 @@ class _SearchTracksState extends State<SearchTracks> {
               title: searchedTracks[i].name,
               artists: searchedTracks[i].artists,
               trailing: IconButton(
-                icon: Icon(Icons.add),
+                icon: Icon(Icons.add_circle_outline),
                 color: Colors.white,
                 onPressed: () => _selectTrack(i),
               ),

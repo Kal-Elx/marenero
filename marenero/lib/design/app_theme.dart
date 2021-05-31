@@ -17,8 +17,25 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
       ),
+      textButtonTheme: TextButtonThemeData(),
       dividerTheme: DividerThemeData(
         color: Colors.white24,
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          padding: EdgeInsets.all(12.0),
+          minimumSize: Size(
+            200.0,
+            50.0,
+          ),
+          primary: Colors.white,
+          side: BorderSide(
+            color: Colors.white,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          ),
+        ),
       ),
       textTheme: GoogleFonts.latoTextTheme().copyWith(
         //* Heading
