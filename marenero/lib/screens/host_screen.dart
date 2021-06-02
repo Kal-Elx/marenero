@@ -1,7 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
-import 'package:marenero/widgets/party_settings.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'dart:convert';
 
@@ -9,7 +9,6 @@ import '../widgets/party_builder.dart';
 import '../widgets/participants_list.dart';
 import '../models/participant.dart';
 import '../models/party.dart';
-import '../models/my_track.dart';
 import 'error_screen.dart';
 import 'loading_screen.dart';
 import '../utils/spotify_api.dart';
@@ -17,6 +16,8 @@ import '../utils/firestore_values.dart' as fs;
 import '../widgets/party_app_bar_title.dart';
 import '../widgets/selects_tracks_button.dart';
 import '../widgets/rounded_divider.dart';
+import '../widgets/music_controller.dart';
+import '../widgets/party_settings.dart';
 
 class HostScreen extends StatefulWidget {
   static const routeName = '/host';
@@ -99,6 +100,8 @@ class _HostScreenState extends State<HostScreen> {
                 partyId: partyId,
                 userId: participant.id,
               ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.miniEndFloat,
               body: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: Column(
@@ -123,18 +126,37 @@ class _HostScreenState extends State<HostScreen> {
                         songsToQueue: party.songsToQueue,
                       ),
                     ),
-                    RoundedDivider(),
-                    TapDebouncer(
-                      onTap: () async {
-                        await queueAllSongs(party);
-                      },
-                      builder: (_, onTap) {
-                        return OutlinedButton(
-                          onPressed: onTap,
-                          child: Text('Queue all songs'),
-                        );
-                      },
+                    RoundedDivider(height: 4.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Column(
+                        children: [
+                          AutoSizeText(
+                            'Is everyone ready?',
+                            maxLines: 1,
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
+                          SizedBox(height: 12),
+                          TapDebouncer(
+                            onTap: () async {
+                              await queueAllSongs(party);
+                            },
+                            builder: (_, onTap) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: OutlinedButton(
+                                  onPressed: onTap,
+                                  child: Text('Queue all songs'),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
+                    RoundedDivider(height: 4.0),
+                    MusicController(forHost: true),
                   ],
                 ),
               ),

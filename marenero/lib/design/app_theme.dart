@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   ThemeData get themeData {
     return ThemeData(
-      primaryColor: Colors.black,
+      primarySwatch: Colors.teal,
       primaryColorBrightness: Brightness.dark,
       primaryColorLight: Colors.black,
       brightness: Brightness.dark,
@@ -36,6 +36,9 @@ class AppTheme {
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
         ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: Colors.white,
       ),
       textTheme: GoogleFonts.latoTextTheme().copyWith(
         //* Heading

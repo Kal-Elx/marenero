@@ -7,7 +7,7 @@ class RoundedDivider extends StatelessWidget {
   final Color color;
 
   const RoundedDivider({
-    this.height = 60.0,
+    this.height = 32.0,
     this.thickness = 4.0,
     this.indent = 0.0,
     this.color = Colors.white54,
