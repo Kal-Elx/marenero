@@ -7,6 +7,7 @@ import '../widgets/party_app_bar_title.dart';
 import '../widgets/participants_list.dart';
 import '../widgets/selects_tracks_button.dart';
 import '../widgets/rounded_divider.dart';
+import '../widgets/music_controller.dart';
 
 class GuestScreen extends StatefulWidget {
   final String partyId;
@@ -61,6 +62,8 @@ class _GuestScreenState extends State<GuestScreen> {
                   songsToQueue: party.songsToQueue,
                 ),
               ),
+              RoundedDivider(height: 4.0),
+              MusicController(forHost: false),
             ],
           ),
         ),

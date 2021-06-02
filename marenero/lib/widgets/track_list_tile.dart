@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class TrackListTile extends StatelessWidget {
@@ -39,13 +40,13 @@ class TrackListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(
+      title: AutoSizeText(
         title,
         style: Theme.of(context).textTheme.bodyText1?.copyWith(
               color: placeholder ? Colors.white54 : Colors.white,
             ),
       ),
-      subtitle: Text(
+      subtitle: AutoSizeText(
         artists.join(', '),
         style: Theme.of(context)
             .textTheme
