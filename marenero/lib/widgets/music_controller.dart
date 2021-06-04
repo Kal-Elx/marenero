@@ -1,10 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:marenero/models/my_track.dart';
+import 'package:marenero/utils/spotify_api.dart';
+import 'dart:async';
 
 class MusicController extends StatefulWidget {
   final bool forHost;
+  final String spotifyToken;
 
-  MusicController({required this.forHost});
+  MusicController({required this.forHost, required this.spotifyToken});
 
   @override
   _MusicControllerState createState() => _MusicControllerState();
@@ -12,21 +16,61 @@ class MusicController extends StatefulWidget {
 
 class _MusicControllerState extends State<MusicController>
     with TickerProviderStateMixin {
-  bool playing = true;
+  bool isPlaying = true;
+  MyTrack? currentTrack;
   late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+
+    _animationController = AnimationController(
+        value: isPlaying ? 1 : 0,
+        vsync: this,
+        duration: Duration(milliseconds: 450));
+
+    // Update player state once immediatley.
+    _updatePlayerState();
+
+    // Update player state periodicly.
+    new Timer.periodic(Duration(milliseconds: 1000),
+        (Timer t) async => {_updatePlayerState()});
   }
 
-  void _togglePlaying() {
+  void _updatePlayerState() async {
+    final Map<String, dynamic> _currentlyPlaying =
+        await currentlyPlaying(widget.spotifyToken);
+    isPlaying = _currentlyPlaying['isPlaying'] as bool;
+    currentTrack = _currentlyPlaying['track'] as MyTrack;
+
     setState(() {
-      playing = !playing;
-      playing ? _animationController.reverse() : _animationController.forward();
+      isPlaying
+          ? _animationController.forward()
+          : _animationController.reverse();
     });
+  }
+
+  void _togglePlaying() async {
+    final Map<String, dynamic> _currentlyPlaying =
+        await currentlyPlaying(widget.spotifyToken);
+    isPlaying = _currentlyPlaying['isPlaying'] as bool;
+    currentTrack = _currentlyPlaying['track'] as MyTrack;
+
+    isPlaying
+        ? await pausePlayback(widget.spotifyToken)
+        : await resumePlayback(widget.spotifyToken);
+
+    setState(() {
+      isPlaying = !isPlaying;
+      isPlaying
+          ? _animationController.forward()
+          : _animationController.reverse();
+    });
+  }
+
+  void _skipToNext() async {
+    await skipToNext(widget.spotifyToken);
+    _updatePlayerState();
   }
 
   @override
@@ -34,6 +78,9 @@ class _MusicControllerState extends State<MusicController>
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        if (currentTrack != null)
+          Image.network(currentTrack!
+              .imageObjects[currentTrack!.imageObjects.length - 1]['url']),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -42,13 +89,13 @@ class _MusicControllerState extends State<MusicController>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoSizeText(
-                  'title',
+                  currentTrack?.name ?? "",
                   style: Theme.of(context).textTheme.bodyText1?.copyWith(
                         color: Colors.white,
                       ),
                 ),
                 AutoSizeText(
-                  ['artists'].join(', '),
+                  currentTrack?.artists.join(', ') ?? "",
                   style: Theme.of(context)
                       .textTheme
                       .bodyText2
@@ -68,7 +115,7 @@ class _MusicControllerState extends State<MusicController>
           ),
         if (widget.forHost)
           IconButton(
-            onPressed: () {},
+            onPressed: _skipToNext,
             icon: Icon(Icons.skip_next_outlined),
           ),
         SizedBox(width: 30),

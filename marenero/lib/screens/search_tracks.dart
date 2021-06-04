@@ -5,12 +5,12 @@ import '../utils/spotify_api.dart';
 import '../widgets/track_list_tile.dart';
 
 class SearchTracks extends StatefulWidget {
-  final String spotifyAuthToken;
+  final String spotifyToken;
   final String userid;
   final Function(MyTrack) selectTrackCallback;
 
   SearchTracks(
-      {required this.spotifyAuthToken,
+      {required this.spotifyToken,
       required this.userid,
       required this.selectTrackCallback});
 
@@ -42,7 +42,7 @@ class _SearchTracksState extends State<SearchTracks> {
   _searchTracks() async {
     if (myController.text.isNotEmpty) {
       searchedTracks =
-          await searchTracks(widget.spotifyAuthToken, myController.text);
+          await searchTracks(widget.spotifyToken, myController.text);
       setState(() {});
     }
   }
@@ -69,6 +69,9 @@ class _SearchTracksState extends State<SearchTracks> {
             itemBuilder: (_, i) => TrackListTile(
               title: searchedTracks[i].name,
               artists: searchedTracks[i].artists,
+              cover: Image.network(searchedTracks[i]
+                      .imageObjects[searchedTracks[i].imageObjects.length - 1]
+                  ['url']),
               trailing: IconButton(
                 icon: Icon(Icons.add_circle_outline),
                 color: Colors.white,

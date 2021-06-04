@@ -82,7 +82,7 @@ class SelectTracksScreen extends StatelessWidget {
                   selectedTracks.length < party.songsToQueue
                       ? Expanded(
                           child: SearchTracks(
-                            spotifyAuthToken: party.spotifyToken,
+                            spotifyToken: party.spotifyToken,
                             userid: userId,
                             selectTrackCallback: addSelectedCallback,
                           ),
