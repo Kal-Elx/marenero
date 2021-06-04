@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 class TrackListTile extends StatelessWidget {
   final String title;
   final List<String> artists;
+  final Widget? cover;
   final Widget? trailing;
   final bool placeholder;
 
   const TrackListTile({
     required this.title,
     required this.artists,
+    this.cover,
     this.trailing,
     this.placeholder = false,
   });
@@ -40,6 +42,7 @@ class TrackListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      leading: cover ?? null,
       title: AutoSizeText(
         title,
         style: Theme.of(context).textTheme.bodyText1?.copyWith(

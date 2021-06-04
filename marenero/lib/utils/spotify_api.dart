@@ -10,10 +10,8 @@ Future<String> getAuthenticationToken() async {
     var authenticationToken = await SpotifySdk.getAuthenticationToken(
         clientId: env['CLIENT_ID'].toString(),
         redirectUrl: env['REDIRECT_URL'].toString(),
-        scope: 'app-remote-control, '
-            'user-modify-playback-state, '
-            'playlist-read-private, '
-            'playlist-modify-public,user-read-currently-playing');
+        scope:
+            'app-remote-control user-read-playback-state user-modify-playback-state playlist-read-private playlist-modify-public user-read-currently-playing');
     //print('Got a token: $authenticationToken');
     return authenticationToken;
   } on PlatformException catch (e) {
@@ -25,14 +23,14 @@ Future<String> getAuthenticationToken() async {
   }
 }
 
-Future<List<MyTrack>> searchTracks(String spotifyAuthToken, String input,
+Future<List<MyTrack>> searchTracks(String spotifyToken, String input,
     [int limit = 10]) async {
   List<MyTrack> searchedTracks = [];
 
   String url =
       "https://api.spotify.com/v1/search?q=${input.replaceAll(' ', '%20')}&type=track&market=SE&limit=$limit";
-  final response = await http.get(Uri.parse(url),
-      headers: {'Authorization': 'Bearer $spotifyAuthToken'});
+  final response = await http
+      .get(Uri.parse(url), headers: {'Authorization': 'Bearer $spotifyToken'});
   final responseData = json.decode(response.body);
 
   try {
@@ -46,10 +44,83 @@ Future<List<MyTrack>> searchTracks(String spotifyAuthToken, String input,
   return searchedTracks;
 }
 
-Future<bool> queueTrack(String spotifyAuthToken, MyTrack track) async {
-  String url = "https://api.spotify.com/v1/me/player/queue";
-  final response = await http.post(Uri.parse(url),
-      headers: {'Authorization': 'Bearer $spotifyAuthToken'},
-      body: {'uri': '${track.spotifyURI}'});
-  return response.statusCode == 200;
+Future<bool> queueTrack(String spotifyToken, MyTrack track) async {
+  var queryParameters = {'uri': track.uri};
+  var uri =
+      Uri.https('api.spotify.com', '/v1/me/player/queue', queryParameters);
+  final response =
+      await http.post(uri, headers: {'Authorization': 'Bearer $spotifyToken'});
+  return response.statusCode == 204;
+}
+
+Future<bool> resumePlayback(String spotifyToken) async {
+  var uri = Uri.https('api.spotify.com', '/v1/me/player/play');
+  final response =
+      await http.put(uri, headers: {'Authorization': 'Bearer $spotifyToken'});
+  return response.statusCode == 204;
+}
+
+Future<bool> pausePlayback(String spotifyToken) async {
+  var uri = Uri.https('api.spotify.com', '/v1/me/player/pause');
+  final response =
+      await http.put(uri, headers: {'Authorization': 'Bearer $spotifyToken'});
+  return response.statusCode == 204;
+}
+
+Future<bool> skipToNext(String spotifyToken) async {
+  var uri = Uri.https('api.spotify.com', '/v1/me/player/next');
+  final response =
+      await http.post(uri, headers: {'Authorization': 'Bearer $spotifyToken'});
+  return response.statusCode == 204;
+}
+
+Future<bool> isPlaying(String spotifyToken) async {
+  var uri = Uri.https('api.spotify.com', '/v1/me/player');
+  final response =
+      await http.get(uri, headers: {'Authorization': 'Bearer $spotifyToken'});
+
+  final responseData = json.decode(response.body);
+
+  try {
+    final isPlaying = responseData['is_playing'] as bool;
+    return isPlaying;
+  } catch (error) {
+    print("Error in isPlaying: $error");
+    return false;
+  }
+}
+
+Future<MyTrack?> currentlyPlayingTrack(String spotifyToken) async {
+  var uri = Uri.https('api.spotify.com', '/v1/me/player/currently-playing');
+  final response =
+      await http.get(uri, headers: {'Authorization': 'Bearer $spotifyToken'});
+
+  final responseData = json.decode(response.body);
+
+  try {
+    final trackObject = responseData['item'];
+    final track = MyTrack.fromJson(trackObject);
+    return track;
+  } catch (error) {
+    print("Error in currentlyPlayingTrack: $error");
+    return null;
+  }
+}
+
+Future<Map<String, dynamic>> currentlyPlaying(String spotifyToken) async {
+  var uri = Uri.https('api.spotify.com', '/v1/me/player/currently-playing');
+  final response =
+      await http.get(uri, headers: {'Authorization': 'Bearer $spotifyToken'});
+
+  final responseData = json.decode(response.body);
+
+  try {
+    final isPlaying = responseData['is_playing'] as bool;
+    final trackObject = responseData['item'];
+    final track = MyTrack.fromJson(trackObject);
+    return {'isPlaying': isPlaying, 'track': track};
+  } catch (error) {
+    print("Error in currentlyPlaying: $error");
+    return {'isPlaying': false, 'track': null};
+  }
 }

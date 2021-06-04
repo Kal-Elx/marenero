@@ -3,15 +3,17 @@
 import '../utils/firestore_values.dart' as fs;
 
 class MyTrack {
-  final String spotifyURI;
+  final String uri;
   final String name;
   final List<String> artists;
+  final List<Map<String, dynamic>> imageObjects;
   String? uid;
 
   MyTrack({
-    required this.spotifyURI,
+    required this.uri,
     required this.name,
     required this.artists,
+    required this.imageObjects,
     this.uid,
   });
 
@@ -20,28 +22,34 @@ class MyTrack {
     for (Map<String, dynamic> artistObject in trackObject['artists'] as List) {
       artists.add(artistObject['name'] as String);
     }
+
+    List<Map<String, dynamic>> imageObjects = trackObject['album']['images'];
+
     return MyTrack(
-      spotifyURI: trackObject['uri'] as String,
+      uri: trackObject['uri'] as String,
       name: trackObject['name'] as String,
       artists: artists,
+      imageObjects: imageObjects,
     );
   }
 
   /// Creates an instance from a Firestore object.
   factory MyTrack.fromFirestoreObject(Map<String, dynamic> data) {
     return MyTrack(
-      spotifyURI: data[fs.MyTrack.uri],
+      uri: data[fs.MyTrack.uri],
       name: data[fs.MyTrack.name],
       artists: data[fs.MyTrack.artists],
+      imageObjects: data[fs.MyTrack.imageObjects],
       uid: data[fs.MyTrack.uid],
     );
   }
 
   Map<String, dynamic> toFirestoreObject() {
     return {
-      fs.MyTrack.uri: spotifyURI,
+      fs.MyTrack.uri: uri,
       fs.MyTrack.name: name,
       fs.MyTrack.artists: artists,
+      fs.MyTrack.imageObjects: imageObjects,
       fs.MyTrack.uid: uid,
     };
   }

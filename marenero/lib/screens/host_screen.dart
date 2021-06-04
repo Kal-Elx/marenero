@@ -39,14 +39,14 @@ class _HostScreenState extends State<HostScreen> {
 
   /// Authenticates Spotify user and creates a party session on firestore.
   Future<String> _createParty() async {
-    final spotifyAuthToken = await getAuthenticationToken();
+    final spotifyToken = await getAuthenticationToken();
     participant = Participant(
-      name: await _getDisplayName(spotifyAuthToken),
+      name: await _getDisplayName(spotifyToken),
       host: true,
     );
 
     var docRef = await _firestore.collection(fs.Collection.parties).add({
-      fs.Party.spotifyToken: spotifyAuthToken,
+      fs.Party.spotifyToken: spotifyToken,
       fs.Party.participants: [participant.toFirestoreObject()],
       fs.Party.songsToQueue: 3,
     });
@@ -156,7 +156,10 @@ class _HostScreenState extends State<HostScreen> {
                       ),
                     ),
                     RoundedDivider(height: 4.0),
-                    MusicController(forHost: true),
+                    MusicController(
+                      forHost: true,
+                      spotifyToken: party.spotifyToken,
+                    ),
                   ],
                 ),
               ),

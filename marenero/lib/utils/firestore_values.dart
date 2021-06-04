@@ -24,5 +24,6 @@ class MyTrack {
   static const uri = 'uri';
   static const name = 'name';
   static const artists = 'artists';
+  static const imageObjects = 'imageObjects';
   static const uid = 'uid';
 }

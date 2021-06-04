@@ -29,6 +29,8 @@ class SelectedTracksList extends StatelessWidget {
             ? TrackListTile(
                 title: tracks[i].name,
                 artists: tracks[i].artists,
+                cover: Image.network(tracks[i]
+                    .imageObjects[tracks[i].imageObjects.length - 1]['url']),
                 trailing: IconButton(
                   icon: Icon(Icons.remove_circle_outline),
                   color: Colors.white,

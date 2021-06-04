@@ -63,7 +63,10 @@ class _GuestScreenState extends State<GuestScreen> {
                 ),
               ),
               RoundedDivider(height: 4.0),
-              MusicController(forHost: false),
+              MusicController(
+                forHost: false,
+                spotifyToken: party.spotifyToken,
+              ),
             ],
           ),
         ),
