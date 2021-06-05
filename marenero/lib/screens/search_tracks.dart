@@ -8,11 +8,14 @@ class SearchTracks extends StatefulWidget {
   final String spotifyToken;
   final String userid;
   final Function(MyTrack) selectTrackCallback;
+  final Function(bool)? onFocusChange;
 
-  SearchTracks(
-      {required this.spotifyToken,
-      required this.userid,
-      required this.selectTrackCallback});
+  SearchTracks({
+    required this.spotifyToken,
+    required this.userid,
+    required this.selectTrackCallback,
+    this.onFocusChange,
+  });
 
   @override
   State createState() => _SearchTracksState();
@@ -56,11 +59,14 @@ class _SearchTracksState extends State<SearchTracks> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        TextField(
-          decoration: InputDecoration(
-              border: OutlineInputBorder(), hintText: 'Search for a song'),
-          style: Theme.of(context).textTheme.bodyText1,
-          controller: myController,
+        Focus(
+          onFocusChange: widget.onFocusChange,
+          child: TextField(
+            decoration: InputDecoration(
+                border: OutlineInputBorder(), hintText: 'Search for a song'),
+            style: Theme.of(context).textTheme.bodyText1,
+            controller: myController,
+          ),
         ),
         Expanded(
           child: ListView.separated(
@@ -79,7 +85,11 @@ class _SearchTracksState extends State<SearchTracks> {
               trailing: IconButton(
                 icon: Icon(Icons.add_circle_outline),
                 color: Colors.white,
-                onPressed: () => _selectTrack(i),
+                onPressed: () {
+                  widget.onFocusChange?.call(false);
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  _selectTrack(i);
+                },
               ),
             ),
           ),

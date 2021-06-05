@@ -9,7 +9,7 @@ import '../utils/firestore_values.dart' as fs;
 import '../models/my_track.dart';
 import '../widgets/rounded_divider.dart';
 
-class SelectTracksScreen extends StatelessWidget {
+class SelectTracksScreen extends StatefulWidget {
   final String partyId;
   final String userId;
 
@@ -18,11 +18,38 @@ class SelectTracksScreen extends StatelessWidget {
     required this.userId,
   });
 
+  @override
+  State<SelectTracksScreen> createState() => _SelectTracksScreenState();
+}
+
+class _SelectTracksScreenState extends State<SelectTracksScreen>
+    with TickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(milliseconds: 500),
+    vsync: this,
+  );
+  late final Animation<double> _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.fastOutSlowIn,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
   addSelectedCallback(MyTrack selectedTrack) {
-    selectedTrack.uid = userId;
+    selectedTrack.uid = widget.userId;
     FirebaseFirestore.instance
         .collection(fs.Collection.parties)
-        .doc(partyId)
+        .doc(widget.partyId)
         .update({
       fs.Party.queuedTracks:
           FieldValue.arrayUnion([selectedTrack.toFirestoreObject()])
@@ -32,7 +59,7 @@ class SelectTracksScreen extends StatelessWidget {
   removeSelectedCallback(MyTrack selectedTrack) {
     FirebaseFirestore.instance
         .collection(fs.Collection.parties)
-        .doc(partyId)
+        .doc(widget.partyId)
         .update({
       fs.Party.queuedTracks:
           FieldValue.arrayRemove([selectedTrack.toFirestoreObject()])
@@ -42,56 +69,73 @@ class SelectTracksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PartyBuilder(
-        partyId: partyId,
+        partyId: widget.partyId,
         builder: (context, party) {
-          final selectedTracks =
-              party.queuedTracks.where((track) => track.uid == userId).toList();
-          return Scaffold(
-            appBar: AppBar(
-              title: Column(
-                children: [
-                  Text(
-                    party.code,
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                  Text(
-                    '${party.participants.length} party people',
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                ],
+          final selectedTracks = party.queuedTracks
+              .where((track) => track.uid == widget.userId)
+              .toList();
+          return GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Scaffold(
+              appBar: AppBar(
+                title: Column(
+                  children: [
+                    Text(
+                      party.code,
+                      style: Theme.of(context).textTheme.headline1,
+                    ),
+                    Text(
+                      '${party.participants.length} party people',
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  RoundedDivider(),
-                  Text(
-                    party.songsToQueue == 1
-                        ? 'Select a banger'
-                        : 'Select ${party.songsToQueue} bangers',
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  SelectedTracksList(
-                    tracks: selectedTracks,
-                    songsToQueue: party.songsToQueue,
-                    removeSelectedCallback: removeSelectedCallback,
-                  ),
-                  RoundedDivider(),
-                  selectedTracks.length < party.songsToQueue
-                      ? Expanded(
-                          child: SearchTracks(
-                            spotifyToken: party.spotifyToken,
-                            userid: userId,
-                            selectTrackCallback: addSelectedCallback,
+              resizeToAvoidBottomInset: true,
+              body: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    RoundedDivider(),
+                    Text(
+                      party.songsToQueue == 1
+                          ? 'Select a banger'
+                          : 'Select ${party.songsToQueue} bangers',
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                    SizeTransition(
+                      sizeFactor: _animation,
+                      axis: Axis.vertical,
+                      axisAlignment: 1.0,
+                      child: SelectedTracksList(
+                        tracks: selectedTracks,
+                        songsToQueue: party.songsToQueue,
+                        removeSelectedCallback: removeSelectedCallback,
+                      ),
+                    ),
+                    RoundedDivider(),
+                    selectedTracks.length < party.songsToQueue
+                        ? Expanded(
+                            child: SearchTracks(
+                              spotifyToken: party.spotifyToken,
+                              userid: widget.userId,
+                              selectTrackCallback: addSelectedCallback,
+                              onFocusChange: (isFocused) {
+                                if (isFocused) {
+                                  _controller.reverse();
+                                } else {
+                                  _controller.forward();
+                                }
+                              },
+                            ),
+                          )
+                        : OutlinedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text('Return to the dance floor'),
                           ),
-                        )
-                      : OutlinedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text('Return to the dance floor'),
-                        ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
