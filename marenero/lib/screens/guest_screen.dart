@@ -51,7 +51,7 @@ class _GuestScreenState extends State<GuestScreen> {
           userId: widget.userId,
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Column(
             children: [
               RoundedDivider(),

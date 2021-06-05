@@ -69,9 +69,13 @@ class _SearchTracksState extends State<SearchTracks> {
             itemBuilder: (_, i) => TrackListTile(
               title: searchedTracks[i].name,
               artists: searchedTracks[i].artists,
-              cover: Image.network(searchedTracks[i]
-                      .imageObjects[searchedTracks[i].imageObjects.length - 1]
-                  ['url']),
+              cover: Image.network(
+                searchedTracks[i]
+                        .imageObjects[searchedTracks[i].imageObjects.length - 1]
+                    ['url'],
+                height: 50.0,
+                width: 50.0,
+              ),
               trailing: IconButton(
                 icon: Icon(Icons.add_circle_outline),
                 color: Colors.white,

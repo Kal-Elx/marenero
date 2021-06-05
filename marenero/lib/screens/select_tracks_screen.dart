@@ -62,7 +62,7 @@ class SelectTracksScreen extends StatelessWidget {
               ),
             ),
             body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

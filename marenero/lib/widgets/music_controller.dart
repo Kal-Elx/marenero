@@ -51,6 +51,8 @@ class _MusicControllerState extends State<MusicController>
   }
 
   void _togglePlaying() async {
+    isPlaying ? _animationController.reverse() : _animationController.forward();
+
     final Map<String, dynamic> _currentlyPlaying =
         await currentlyPlaying(widget.spotifyToken);
     isPlaying = _currentlyPlaying['isPlaying'] as bool;
@@ -59,13 +61,6 @@ class _MusicControllerState extends State<MusicController>
     isPlaying
         ? await pausePlayback(widget.spotifyToken)
         : await resumePlayback(widget.spotifyToken);
-
-    setState(() {
-      isPlaying = !isPlaying;
-      isPlaying
-          ? _animationController.forward()
-          : _animationController.reverse();
-    });
   }
 
   void _skipToNext() async {
@@ -79,8 +74,12 @@ class _MusicControllerState extends State<MusicController>
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         if (currentTrack != null)
-          Image.network(currentTrack!
-              .imageObjects[currentTrack!.imageObjects.length - 1]['url']),
+          Image.network(
+            currentTrack!.imageObjects[currentTrack!.imageObjects.length - 1]
+                ['url'],
+            height: 50.0,
+            width: 50.0,
+          ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -118,7 +117,6 @@ class _MusicControllerState extends State<MusicController>
             onPressed: _skipToNext,
             icon: Icon(Icons.skip_next_outlined),
           ),
-        SizedBox(width: 30),
       ],
     );
   }
