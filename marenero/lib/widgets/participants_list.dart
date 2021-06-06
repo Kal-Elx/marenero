@@ -46,9 +46,18 @@ class ParticipantsList extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyText1,
                 textAlign: TextAlign.center,
               ),
-              leading:
-                  Icon(participants[i].host ? Icons.music_note_outlined : null),
-              trailing: _participantStatus(context, participants[i].id),
+              // Having the leading and trailing widget of the same width
+              // centers the title.
+              leading: Container(
+                width: 40.0,
+                alignment: Alignment.centerLeft,
+                child: Icon(
+                    participants[i].host ? Icons.music_note_outlined : null),
+              ),
+              trailing: Container(
+                  width: 40.0,
+                  alignment: Alignment.centerRight,
+                  child: _participantStatus(context, participants[i].id)),
             ),
           ),
         ),
