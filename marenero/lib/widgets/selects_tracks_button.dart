@@ -14,6 +14,7 @@ class SelectTracksButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      mini: true,
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(
