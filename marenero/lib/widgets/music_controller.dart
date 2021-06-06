@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:marenero/models/my_track.dart';
+import 'package:marenero/models/currently_playing.dart';
 import 'package:marenero/utils/spotify_api.dart';
 import 'dart:async';
 
@@ -16,8 +16,10 @@ class MusicController extends StatefulWidget {
 
 class _MusicControllerState extends State<MusicController>
     with TickerProviderStateMixin {
-  bool isPlaying = true;
-  MyTrack? currentTrack;
+  CurrentlyPlaying current = CurrentlyPlaying(track: null, isPlaying: false);
+  bool waiting = false;
+  bool isPlaying = false;
+
   late AnimationController _animationController;
 
   @override
@@ -25,9 +27,9 @@ class _MusicControllerState extends State<MusicController>
     super.initState();
 
     _animationController = AnimationController(
-        value: isPlaying ? 1 : 0,
+        value: current.isPlaying ? 1 : 0,
         vsync: this,
-        duration: Duration(milliseconds: 450));
+        duration: Duration(milliseconds: 250));
 
     // Update player state once immediatley.
     _updatePlayerState();
@@ -38,28 +40,37 @@ class _MusicControllerState extends State<MusicController>
   }
 
   void _updatePlayerState() async {
-    final Map<String, dynamic> _currentlyPlaying =
-        await currentlyPlaying(widget.spotifyToken);
-    isPlaying = _currentlyPlaying['isPlaying'] as bool;
-    currentTrack = _currentlyPlaying['track'] as MyTrack;
+    current = await currentlyPlaying(widget.spotifyToken);
 
-    isPlaying ? _animationController.forward() : _animationController.reverse();
+    setState(() {
+      if (!waiting) {
+        isPlaying = current.isPlaying;
+        current.isPlaying
+            ? _animationController.forward()
+            : _animationController.reverse();
+      }
+    });
   }
 
   void _togglePlaying() async {
-    isPlaying ? _animationController.reverse() : _animationController.forward();
+    waiting = true;
+    var animation = isPlaying
+        ? _animationController.reverse()
+        : _animationController.forward();
 
-    final Map<String, dynamic> _currentlyPlaying =
-        await currentlyPlaying(widget.spotifyToken);
+    isPlaying = !isPlaying;
+    setState(() {}); // Make animation happen.
 
-    setState(() {
-      isPlaying = _currentlyPlaying['isPlaying'] as bool;
-      currentTrack = _currentlyPlaying['track'] as MyTrack;
-    });
+    if (current.track == null) {
+      await animation;
+    } else {
+      isPlaying
+          ? await resumePlayback(widget.spotifyToken)
+          : await pausePlayback(widget.spotifyToken);
+    }
 
-    isPlaying
-        ? await pausePlayback(widget.spotifyToken)
-        : await resumePlayback(widget.spotifyToken);
+    waiting = false;
+    _updatePlayerState();
   }
 
   void _skipToNext() async {
@@ -72,9 +83,9 @@ class _MusicControllerState extends State<MusicController>
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (currentTrack != null)
+        if (current.track != null)
           Image.network(
-            currentTrack!.imageObjects[currentTrack!.imageObjects.length - 1]
+            current.track!.imageObjects[current.track!.imageObjects.length - 1]
                 ['url'],
             height: 50.0,
             width: 50.0,
@@ -87,13 +98,13 @@ class _MusicControllerState extends State<MusicController>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoSizeText(
-                  currentTrack?.name ?? "",
+                  current.track?.name ?? "",
                   style: Theme.of(context).textTheme.bodyText1?.copyWith(
                         color: Colors.white,
                       ),
                 ),
                 AutoSizeText(
-                  currentTrack?.artists.join(', ') ?? "",
+                  current.track?.artists.join(', ') ?? "",
                   style: Theme.of(context)
                       .textTheme
                       .bodyText2

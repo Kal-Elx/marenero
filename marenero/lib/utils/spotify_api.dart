@@ -1,3 +1,4 @@
+import 'package:marenero/models/currently_playing.dart';
 import 'package:marenero/models/my_track.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -90,37 +91,21 @@ Future<bool> isPlaying(String spotifyToken) async {
   }
 }
 
-Future<MyTrack?> currentlyPlayingTrack(String spotifyToken) async {
+Future<CurrentlyPlaying> currentlyPlaying(String spotifyToken) async {
   var uri = Uri.https('api.spotify.com', '/v1/me/player/currently-playing');
   final response =
       await http.get(uri, headers: {'Authorization': 'Bearer $spotifyToken'});
 
-  final responseData = json.decode(response.body);
-
-  try {
-    final trackObject = responseData['item'];
-    final track = MyTrack.fromJson(trackObject);
-    return track;
-  } catch (error) {
-    print("Error in currentlyPlayingTrack: $error");
-    return null;
+  if (response.statusCode == 200) {
+    try {
+      final responseData = json.decode(response.body);
+      final isPlaying = responseData['is_playing'] as bool;
+      final trackObject = responseData['item'];
+      final track = MyTrack.fromJson(trackObject);
+      return CurrentlyPlaying(track: track, isPlaying: isPlaying);
+    } catch (error) {
+      print("Error in currentlyPlaying: $error");
+    }
   }
-}
-
-Future<Map<String, dynamic>> currentlyPlaying(String spotifyToken) async {
-  var uri = Uri.https('api.spotify.com', '/v1/me/player/currently-playing');
-  final response =
-      await http.get(uri, headers: {'Authorization': 'Bearer $spotifyToken'});
-
-  final responseData = json.decode(response.body);
-
-  try {
-    final isPlaying = responseData['is_playing'] as bool;
-    final trackObject = responseData['item'];
-    final track = MyTrack.fromJson(trackObject);
-    return {'isPlaying': isPlaying, 'track': track};
-  } catch (error) {
-    print("Error in currentlyPlaying: $error");
-    return {'isPlaying': false, 'track': null};
-  }
+  return CurrentlyPlaying(track: null, isPlaying: false);
 }
