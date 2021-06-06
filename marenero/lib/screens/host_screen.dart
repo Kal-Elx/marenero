@@ -95,13 +95,16 @@ class _HostScreenState extends State<HostScreen> {
             builder: (context, party) => Scaffold(
               appBar: AppBar(
                 title: PartyAppBarTitle(party.code),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: SelectTracksButton(
+                      partyId: partyId,
+                      userId: participant.id,
+                    ),
+                  ),
+                ],
               ),
-              floatingActionButton: SelectTracksButton(
-                partyId: partyId,
-                userId: participant.id,
-              ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.miniEndTop,
               body: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Column(
