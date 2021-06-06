@@ -43,11 +43,7 @@ class _MusicControllerState extends State<MusicController>
     isPlaying = _currentlyPlaying['isPlaying'] as bool;
     currentTrack = _currentlyPlaying['track'] as MyTrack;
 
-    setState(() {
-      isPlaying
-          ? _animationController.forward()
-          : _animationController.reverse();
-    });
+    isPlaying ? _animationController.forward() : _animationController.reverse();
   }
 
   void _togglePlaying() async {
@@ -55,8 +51,11 @@ class _MusicControllerState extends State<MusicController>
 
     final Map<String, dynamic> _currentlyPlaying =
         await currentlyPlaying(widget.spotifyToken);
-    isPlaying = _currentlyPlaying['isPlaying'] as bool;
-    currentTrack = _currentlyPlaying['track'] as MyTrack;
+
+    setState(() {
+      isPlaying = _currentlyPlaying['isPlaying'] as bool;
+      currentTrack = _currentlyPlaying['track'] as MyTrack;
+    });
 
     isPlaying
         ? await pausePlayback(widget.spotifyToken)
