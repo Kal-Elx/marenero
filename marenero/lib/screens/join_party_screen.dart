@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:marenero/models/participant.dart';
@@ -17,7 +15,8 @@ class JoinPartyScreen extends StatefulWidget {
 
 class _JoinPartyScreenState extends State<JoinPartyScreen> {
   final _firestore = FirebaseFirestore.instance;
-  final _username = 'guest-${Random().nextInt(100)}';
+  String _username = '';
+  bool _usernameSubmitted = false;
 
   Future<void> _findParty({
     required String code,
@@ -51,20 +50,48 @@ class _JoinPartyScreenState extends State<JoinPartyScreen> {
       body: Container(
         width: screenSize.width,
         child: Center(
-          child: CodeInput(
-            onComplete: (code) => _findParty(
-              code: code,
-              onFoundParty: (partyId, userId) {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (_) => GuestScreen(
-                      partyId: partyId,
-                      userId: userId,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 1000),
+            child: !_usernameSubmitted
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                        TextField(
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Enter your name'),
+                          style: Theme.of(context).textTheme.bodyText1,
+                          onChanged: (text) {
+                            _username = text;
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: OutlinedButton(
+                            onPressed: () {
+                              setState(() {
+                                _usernameSubmitted = true;
+                              });
+                            },
+                            child: Text('Continue'),
+                          ),
+                        ),
+                      ])
+                : CodeInput(
+                    onComplete: (code) => _findParty(
+                      code: code,
+                      onFoundParty: (partyId, userId) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (_) => GuestScreen(
+                              partyId: partyId,
+                              userId: userId,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                );
-              },
-            ),
           ),
         ),
       ),
