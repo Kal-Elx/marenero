@@ -1,7 +1,9 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:marenero/models/participant.dart';
 import 'package:marenero/screens/guest_screen.dart';
+import 'package:marenero/widgets/displayname_input.dart';
 
 import '../widgets/code_input.dart';
 import '../utils/firestore_values.dart' as fs;
@@ -15,8 +17,8 @@ class JoinPartyScreen extends StatefulWidget {
 
 class _JoinPartyScreenState extends State<JoinPartyScreen> {
   final _firestore = FirebaseFirestore.instance;
-  String _username = '';
-  bool _usernameSubmitted = false;
+  String name = '';
+  bool nameSubmitted = false;
 
   Future<void> _findParty({
     required String code,
@@ -28,7 +30,7 @@ class _JoinPartyScreenState extends State<JoinPartyScreen> {
         .get();
     if (partySnapshot.docs.isNotEmpty) {
       var partyId = partySnapshot.docs.first.id;
-      final user = Participant(name: _username);
+      final user = Participant(name: name);
       await _firestore.collection(fs.Collection.parties).doc(partyId).update({
         fs.Party.participants: FieldValue.arrayUnion(
           [user.toFirestoreObject()],
@@ -52,46 +54,46 @@ class _JoinPartyScreenState extends State<JoinPartyScreen> {
         child: Center(
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 1000),
-            child: !_usernameSubmitted
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                        TextField(
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your name'),
-                          style: Theme.of(context).textTheme.bodyText1,
-                          onChanged: (text) {
-                            _username = text;
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                AutoSizeText(
+                  !nameSubmitted
+                      ? 'What do they call you?'
+                      : 'What is the party code?',
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: !nameSubmitted
+                      ? DisplayNameInput(
+                          onSubmit: (input) {
+                            setState(() {
+                              name = input;
+                              nameSubmitted = true;
+                            });
                           },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: OutlinedButton(
-                            onPressed: () {
-                              setState(() {
-                                _usernameSubmitted = true;
-                              });
+                          name: "",
+                        )
+                      : CodeInput(
+                          onComplete: (code) => _findParty(
+                            code: code,
+                            onFoundParty: (partyId, userId) {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (_) => GuestScreen(
+                                    partyId: partyId,
+                                    userId: userId,
+                                  ),
+                                ),
+                              );
                             },
-                            child: Text('Continue'),
                           ),
                         ),
-                      ])
-                : CodeInput(
-                    onComplete: (code) => _findParty(
-                      code: code,
-                      onFoundParty: (partyId, userId) {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (_) => GuestScreen(
-                              partyId: partyId,
-                              userId: userId,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
