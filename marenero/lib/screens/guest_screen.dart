@@ -5,9 +5,9 @@ import '../utils/firestore_values.dart' as fs;
 import '../widgets/party_builder.dart';
 import '../widgets/party_app_bar_title.dart';
 import '../widgets/participants_list.dart';
-import '../widgets/selects_tracks_button.dart';
 import '../widgets/rounded_divider.dart';
-import '../widgets/music_controller.dart';
+import '../widgets/playback_controller.dart';
+import 'select_tracks_screen.dart';
 
 class GuestScreen extends StatefulWidget {
   final String partyId;
@@ -40,20 +40,49 @@ class _GuestScreenState extends State<GuestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    FocusScope.of(context).unfocus();
+
     return PartyBuilder(
       partyId: widget.partyId,
       builder: (context, party) => Scaffold(
         appBar: AppBar(
           title: PartyAppBarTitle(party.code),
         ),
-        floatingActionButton: SelectTracksButton(
-          partyId: party.id,
-          userId: widget.userId,
-        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Column(
             children: [
+              RoundedDivider(),
+              Text(
+                "Search",
+                style: Theme.of(context).textTheme.headline3,
+              ),
+              Focus(
+                onFocusChange: (isFocused) {
+                  if (isFocused) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => SelectTracksScreen(
+                          partyId: party.id,
+                          userId: widget.userId,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.search),
+                    TextField(
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Search for songs to queue'),
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ],
+                ),
+              ),
               RoundedDivider(),
               Expanded(
                 child: ParticipantsList(
@@ -63,7 +92,7 @@ class _GuestScreenState extends State<GuestScreen> {
                 ),
               ),
               RoundedDivider(height: 4.0),
-              MusicController(
+              PlaybackController(
                 forHost: false,
                 spotifyToken: party.spotifyToken,
               ),

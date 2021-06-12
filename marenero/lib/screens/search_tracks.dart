@@ -61,11 +61,18 @@ class _SearchTracksState extends State<SearchTracks> {
       children: <Widget>[
         Focus(
           onFocusChange: widget.onFocusChange,
-          child: TextField(
-            decoration: InputDecoration(
-                border: OutlineInputBorder(), hintText: 'Search for a song'),
-            style: Theme.of(context).textTheme.bodyText1,
-            controller: myController,
+          child: Row(
+            children: [
+              Icon(Icons.search),
+              TextField(
+                autofocus: true,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Search for a song'),
+                style: Theme.of(context).textTheme.bodyText1,
+                controller: myController,
+              ),
+            ],
           ),
         ),
         Expanded(
