@@ -36,7 +36,7 @@ class _SelectTracksScreenState extends State<SelectTracksScreen>
   @override
   void initState() {
     super.initState();
-    _controller.forward();
+    _controller.reverse();
   }
 
   @override
@@ -82,11 +82,11 @@ class _SelectTracksScreenState extends State<SelectTracksScreen>
                   children: [
                     Text(
                       party.code,
-                      style: Theme.of(context).textTheme.headline1,
+                      style: Theme.of(context).textTheme.headline2,
                     ),
                     Text(
                       '${party.participants.length} party people',
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ],
                 ),
@@ -132,7 +132,10 @@ class _SelectTracksScreenState extends State<SelectTracksScreen>
                           )
                         : OutlinedButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: Text('Return to the dance floor'),
+                            child: Text(
+                              'Return to the dance floor',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
                           ),
                   ],
                 ),

@@ -4,23 +4,24 @@ import 'package:marenero/models/currently_playing.dart';
 import 'package:marenero/utils/spotify_api.dart';
 import 'dart:async';
 
-class MusicController extends StatefulWidget {
+class PlaybackController extends StatefulWidget {
   final bool forHost;
   final String spotifyToken;
 
-  MusicController({required this.forHost, required this.spotifyToken});
+  PlaybackController({required this.forHost, required this.spotifyToken});
 
   @override
-  _MusicControllerState createState() => _MusicControllerState();
+  _PlaybackControllerState createState() => _PlaybackControllerState();
 }
 
-class _MusicControllerState extends State<MusicController>
+class _PlaybackControllerState extends State<PlaybackController>
     with TickerProviderStateMixin {
   CurrentlyPlaying current = CurrentlyPlaying(track: null, isPlaying: false);
   bool waiting = false;
   bool isPlaying = false;
 
   late AnimationController _animationController;
+  late Timer _timer;
 
   @override
   void initState() {
@@ -35,8 +36,15 @@ class _MusicControllerState extends State<MusicController>
     _updatePlayerState();
 
     // Update player state periodicly.
-    new Timer.periodic(Duration(milliseconds: 1000),
+    _timer = new Timer.periodic(Duration(milliseconds: 1000),
         (Timer t) async => {_updatePlayerState()});
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _animationController.dispose();
+    super.dispose();
   }
 
   void _updatePlayerState() async {
@@ -87,8 +95,6 @@ class _MusicControllerState extends State<MusicController>
           Image.network(
             current.track!.imageObjects[current.track!.imageObjects.length - 1]
                 ['url'],
-            height: 50.0,
-            width: 50.0,
           ),
         Expanded(
           child: Padding(
@@ -101,6 +107,7 @@ class _MusicControllerState extends State<MusicController>
                   current.track?.name ?? "",
                   style: Theme.of(context).textTheme.bodyText1?.copyWith(
                         color: Colors.white,
+                        fontWeight: FontWeight.w500,
                       ),
                 ),
                 AutoSizeText(

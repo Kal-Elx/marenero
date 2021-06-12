@@ -23,7 +23,9 @@ class ParticipantsList extends StatelessWidget {
     } else {
       return AutoSizeText(
         '$queudSongs/$songsToQueue',
-        style: Theme.of(context).textTheme.bodyText1,
+        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
       );
     }
   }
@@ -43,7 +45,9 @@ class ParticipantsList extends StatelessWidget {
             itemBuilder: (_, i) => ListTile(
               title: AutoSizeText(
                 participants[i].name,
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
                 textAlign: TextAlign.center,
               ),
               // Having the leading and trailing widget of the same width

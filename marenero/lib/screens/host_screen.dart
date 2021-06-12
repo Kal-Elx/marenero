@@ -14,10 +14,10 @@ import 'loading_screen.dart';
 import '../utils/spotify_api.dart';
 import '../utils/firestore_values.dart' as fs;
 import '../widgets/party_app_bar_title.dart';
-import '../widgets/selects_tracks_button.dart';
 import '../widgets/rounded_divider.dart';
-import '../widgets/music_controller.dart';
+import '../widgets/playback_controller.dart';
 import '../widgets/party_settings.dart';
+import 'select_tracks_screen.dart';
 
 class HostScreen extends StatefulWidget {
   static const routeName = '/host';
@@ -90,26 +90,58 @@ class _HostScreenState extends State<HostScreen> {
         if (snapshot.hasData) {
           var partyId = snapshot.data.toString();
 
+          FocusScope.of(context).unfocus();
+
           return PartyBuilder(
             partyId: partyId,
             builder: (context, party) => Scaffold(
               appBar: AppBar(
                 title: PartyAppBarTitle(party.code),
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: SelectTracksButton(
-                      partyId: partyId,
-                      userId: participant.id,
-                    ),
-                  ),
-                ],
               ),
               body: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Column(
                   children: [
                     RoundedDivider(),
+                    Text(
+                      "Search",
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                    Focus(
+                      onFocusChange: (isFocused) {
+                        if (isFocused) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => SelectTracksScreen(
+                                partyId: partyId,
+                                userId: participant.id,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search),
+                          TextField(
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Search for songs to queue'),
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                        ],
+                      ),
+                    ),
+                    RoundedDivider(),
+                    Expanded(
+                      child: ParticipantsList(
+                        participants: party.participants,
+                        tracks: party.queuedTracks,
+                        songsToQueue: party.songsToQueue,
+                      ),
+                    ),
+                    RoundedDivider(height: 4.0),
                     PartySettings(
                       selected: party.songsToQueue,
                       onSelect: (selected) {
@@ -121,15 +153,6 @@ class _HostScreenState extends State<HostScreen> {
                         );
                       },
                     ),
-                    RoundedDivider(),
-                    Expanded(
-                      child: ParticipantsList(
-                        participants: party.participants,
-                        tracks: party.queuedTracks,
-                        songsToQueue: party.songsToQueue,
-                      ),
-                    ),
-                    RoundedDivider(height: 4.0),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Column(
@@ -150,7 +173,12 @@ class _HostScreenState extends State<HostScreen> {
                                     const EdgeInsets.symmetric(vertical: 4.0),
                                 child: OutlinedButton(
                                   onPressed: onTap,
-                                  child: Text('Queue all songs'),
+                                  child: Text('Queue all songs',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold)),
                                 ),
                               );
                             },
@@ -159,7 +187,7 @@ class _HostScreenState extends State<HostScreen> {
                       ),
                     ),
                     RoundedDivider(height: 4.0),
-                    MusicController(
+                    PlaybackController(
                       forHost: true,
                       spotifyToken: party.spotifyToken,
                     ),

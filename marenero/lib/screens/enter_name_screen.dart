@@ -1,64 +1,77 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:marenero/design/text_logo.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:marenero/models/participant.dart';
 import '../utils/firestore_values.dart' as fs;
+import 'guest_screen.dart';
+import 'party_is_over_screen.dart';
 
-import 'enter_name_screen.dart';
-import 'host_screen.dart';
+class EnterNameScreen extends StatefulWidget {
+  static const routeName = '/enter';
+  final String partyCode;
 
-class HomeScreen extends StatefulWidget {
+  EnterNameScreen({required this.partyCode});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _EnterNameScreenState createState() => _EnterNameScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _EnterNameScreenState extends State<EnterNameScreen> {
   final _firestore = FirebaseFirestore.instance;
-  String partyCode = "";
-  bool partyCodeError = false;
-
-  // manage state of modal progress HUD widget
   bool _isLoading = false;
+  String _name = "";
 
-  Future<void> joinParty() async {
-    if (await _partyExists(code: partyCode)) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => EnterNameScreen(
-            partyCode: partyCode,
-          ),
-        ),
-      );
-    } else {
-      setState(() {
-        partyCodeError = true;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'We didn\'t recognize that party code. Please check and try again.',
-            style: Theme.of(context).textTheme.bodyText2,
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  Future<bool> _partyExists({required String code}) async {
-    // start the modal progress HUD
+  void _onPressed() {
     setState(() {
       _isLoading = true;
     });
+    _enterParty(
+        code: widget.partyCode,
+        name: _name,
+        onFoundParty: (partyId, userId) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => GuestScreen(
+                partyId: partyId,
+                userId: userId,
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> _enterParty({
+    required String code,
+    required String name,
+    required void Function(String partyId, String userId) onFoundParty,
+  }) async {
     final partySnapshot = await _firestore
         .collection(fs.Collection.parties)
         .where(fs.Party.code, isEqualTo: code)
         .get();
-    setState(() {
-      _isLoading = false;
-    });
-    return partySnapshot.docs.isNotEmpty;
+    if (partySnapshot.docs.isNotEmpty) {
+      var partyId = partySnapshot.docs.first.id;
+      final user = Participant(name: name);
+      await _firestore.collection(fs.Collection.parties).doc(partyId).update({
+        fs.Party.participants: FieldValue.arrayUnion(
+          [user.toFirestoreObject()],
+        )
+      });
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => GuestScreen(
+            partyId: partyId,
+            userId: user.id,
+          ),
+        ),
+      );
+      onFoundParty(partyId, user.id);
+    } else {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => PartyIsOverScreen()));
+    }
   }
 
   @override
@@ -95,10 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: EdgeInsets.all(16.0),
-                child: TextLogo('Marenero'),
-              ),
-              Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Container(
                   decoration: BoxDecoration(
@@ -123,18 +132,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             contentPadding:
                                 const EdgeInsets.symmetric(vertical: 0.0),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: partyCodeError
-                                      ? Colors.red
-                                      : Colors.grey),
+                              borderSide: BorderSide(color: Colors.grey),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: partyCodeError
-                                      ? Colors.red
-                                      : Colors.black),
+                              borderSide: BorderSide(color: Colors.black),
                             ),
-                            hintText: 'Party Code',
+                            hintText: 'Your name',
                             hintStyle:
                                 Theme.of(context).textTheme.bodyText1!.copyWith(
                                       color: Colors.grey,
@@ -142,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                           ),
                           onChanged: (text) {
-                            partyCode = text;
+                            _name = text;
                           },
                         ),
                       ),
@@ -150,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: EdgeInsets.fromLTRB(15, 4, 15, 0),
                         child: TextButton(
                           child: Text(
-                            "Join Party",
+                            "Enter",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1!
@@ -161,43 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               backgroundColor:
                                   Theme.of(context).backgroundColor,
                               minimumSize: Size(320, 55)),
-                          onPressed: joinParty,
+                          onPressed: _onPressed,
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(0.0),
-                child: Text(
-                  'or',
-                  style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextButton.icon(
-                  label: Text(
-                    "Host Party",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  icon: RotatedBox(
-                    quarterTurns: 3,
-                    child: Icon(Icons.contactless),
-                  ),
-                  style: TextButton.styleFrom(
-                    primary: Colors.white,
-                    backgroundColor: Color.fromRGBO(30, 215, 96, 1.0),
-                    minimumSize: Size(300, 55),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(HostScreen.routeName);
-                  },
                 ),
               ),
             ],

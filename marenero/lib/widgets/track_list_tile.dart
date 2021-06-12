@@ -47,6 +47,7 @@ class TrackListTile extends StatelessWidget {
         title,
         style: Theme.of(context).textTheme.bodyText1?.copyWith(
               color: placeholder ? Colors.white54 : Colors.white,
+              fontWeight: FontWeight.w500,
             ),
       ),
       subtitle: AutoSizeText(
