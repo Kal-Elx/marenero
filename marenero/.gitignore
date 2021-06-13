@@ -49,5 +49,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Firebase Cloud Functions
+# Firebase
 functions/node_modules
+.firebase/*.cache
