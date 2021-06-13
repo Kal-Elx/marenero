@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "marenero-b8289"
+  },
+  "targets": {
+    "marenero-b8289": {
+      "hosting": {
+        "redirect": [
+          "spotify-redirect"
+        ],
+        "app": [
+          "marenero-b8289"
+        ]
+      }
+    }
   }
 }
