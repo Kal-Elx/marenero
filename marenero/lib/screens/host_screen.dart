@@ -39,7 +39,14 @@ class _HostScreenState extends State<HostScreen> {
 
   /// Authenticates Spotify user and creates a party session on firestore.
   Future<String> _createParty() async {
-    final spotifyToken = await getAuthenticationToken();
+    final appInfo = await _firestore
+        .collection(fs.Collection.appInfo)
+        .doc(fs.SpotifyAppInfo.document)
+        .get();
+    final spotifyToken = await getAuthenticationToken(
+      clientId: appInfo.get(fs.SpotifyAppInfo.clientId),
+      redirectUrl: appInfo.get(fs.SpotifyAppInfo.redirectUrl),
+    );
     participant = Participant(
       name: await _getDisplayName(spotifyToken),
       host: true,
