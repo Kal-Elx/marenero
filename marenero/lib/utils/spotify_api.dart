@@ -1,16 +1,18 @@
 import 'package:marenero/models/currently_playing.dart';
 import 'package:marenero/models/my_track.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<String> getAuthenticationToken() async {
+Future<String> getAuthenticationToken({
+  required String clientId,
+  required String redirectUrl,
+}) async {
   try {
     var authenticationToken = await SpotifySdk.getAuthenticationToken(
-        clientId: env['CLIENT_ID'].toString(),
-        redirectUrl: env['REDIRECT_URL'].toString(),
+        clientId: clientId,
+        redirectUrl: redirectUrl,
         scope:
             'app-remote-control user-read-playback-state user-modify-playback-state playlist-read-private playlist-modify-public user-read-currently-playing');
     //print('Got a token: $authenticationToken');

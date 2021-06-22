@@ -1,6 +1,7 @@
 class Collection {
   const Collection._();
   static const parties = 'parties';
+  static const appInfo = 'app_info';
 }
 
 class Party {
@@ -26,4 +27,11 @@ class MyTrack {
   static const artists = 'artists';
   static const imageObjects = 'imageObjects';
   static const uid = 'uid';
+}
+
+class SpotifyAppInfo {
+  const SpotifyAppInfo._();
+  static const document = 'spotify';
+  static const clientId = 'client_id';
+  static const redirectUrl = 'redirect_url';
 }
