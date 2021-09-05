@@ -64,13 +64,14 @@ class _SearchTracksState extends State<SearchTracks> {
           child: Row(
             children: [
               Icon(Icons.search),
-              TextField(
-                autofocus: true,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Search for a song'),
-                style: Theme.of(context).textTheme.bodyText1,
-                controller: myController,
+              Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: TextField(
+                  autofocus: true,
+                  decoration: InputDecoration(hintText: 'Search for a song'),
+                  style: Theme.of(context).textTheme.bodyText1,
+                  controller: myController,
+                ),
               ),
             ],
           ),

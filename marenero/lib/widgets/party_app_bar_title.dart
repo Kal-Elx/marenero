@@ -17,7 +17,8 @@ class PartyAppBarTitle extends StatelessWidget {
         ),
         SizedBox(height: 4.0),
         Text(
-          code,
+          code.replaceAllMapped(
+              RegExp(r".{2}"), (match) => "${match.group(0)} "),
           style: Theme.of(context).textTheme.headline2,
         ),
       ],
