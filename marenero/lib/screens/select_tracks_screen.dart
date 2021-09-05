@@ -81,7 +81,8 @@ class _SelectTracksScreenState extends State<SelectTracksScreen>
                 title: Column(
                   children: [
                     Text(
-                      party.code,
+                      party.code.replaceAllMapped(
+                          RegExp(r".{2}"), (match) => "${match.group(0)} "),
                       style: Theme.of(context).textTheme.headline2,
                     ),
                     Text(

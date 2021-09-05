@@ -131,11 +131,13 @@ class _HostScreenState extends State<HostScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.search),
-                          TextField(
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'Search for songs to queue'),
-                            style: Theme.of(context).textTheme.bodyText1,
+                          Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: TextField(
+                              decoration: InputDecoration(
+                                  hintText: 'Search for songs to queue'),
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
                           ),
                         ],
                       ),

@@ -14,7 +14,7 @@ Future<String> getAuthenticationToken({
         clientId: clientId,
         redirectUrl: redirectUrl,
         scope:
-            'app-remote-control user-read-playback-state user-modify-playback-state playlist-read-private playlist-modify-public user-read-currently-playing');
+            'app-remote-control user-read-playback-state user-modify-playback-state user-read-currently-playing');
     //print('Got a token: $authenticationToken');
     return authenticationToken;
   } on PlatformException catch (e) {
