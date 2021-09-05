@@ -1,5 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const axios = require("axios");
+const querystring = require("querystring");
 admin.initializeApp();
 
 /**
@@ -54,4 +56,47 @@ exports.setPartyID = functions.firestore.document("parties/{documentId}")
       const tracks = [];
       return generateUniquePartyCode().then(
           (code) => snap.ref.set({code, tracks}, {merge: true}));
+    });
+
+/**
+ * Returns the encoded string needed to get the access token.
+ * @return {Promise<String>}
+ */
+function getEncodedString() {
+  return admin.firestore().collection("secret_app_info").doc("secrets").get()
+      .then((snap) => {
+        const clientId = snap.get("client_id");
+        const clientSecret = snap.get("client_secret");
+        return Buffer.from(
+            clientId + ":" + clientSecret
+        ).toString("base64");
+      });
+}
+
+exports.setAccessToken = functions.firestore.document("parties/{documentId}")
+    .onCreate((snap, _) => {
+      const apiURL = "https://accounts.spotify.com/api/token";
+      const apiData = {
+        grant_type: "client_credentials",
+      };
+
+      return getEncodedString().then((encodedStr) => {
+        console.log("Encoded string: " + encodedStr);
+        const config = {
+          headers: {
+            Authorization: "Basic " + encodedStr,
+          },
+        };
+        return axios.post(apiURL,
+            querystring.stringify(apiData),
+            config
+        )
+            .then((response) => {
+              console.log("Request success: " + response.data.toString());
+              const token = response.data["access_token"];
+              return snap.ref.set({token}, {merge: true});
+            }, (error) => {
+              console.log(error);
+            });
+      });
     });
