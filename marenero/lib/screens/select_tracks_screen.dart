@@ -119,7 +119,7 @@ class _SelectTracksScreenState extends State<SelectTracksScreen>
                     selectedTracks.length < party.songsToQueue
                         ? Expanded(
                             child: SearchTracks(
-                              spotifyToken: party.spotifyToken,
+                              spotifyToken: party.partyToken,
                               userid: widget.userId,
                               selectTrackCallback: addSelectedCallback,
                               onFocusChange: (isFocused) {

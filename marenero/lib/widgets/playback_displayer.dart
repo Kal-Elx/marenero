@@ -1,24 +1,18 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:marenero/models/currently_playing.dart';
-import 'package:marenero/utils/spotify_api.dart';
 import 'dart:async';
-import '../utils/firestore_values.dart' as fs;
 
-class PlaybackController extends StatefulWidget {
-  final String partyId;
-  final String hostToken;
-
-  PlaybackController({required this.partyId, required this.hostToken});
+class PlaybackDisplayer extends StatefulWidget {
+  final CurrentlyPlaying current;
+  PlaybackDisplayer({required this.current});
 
   @override
-  _PlaybackControllerState createState() => _PlaybackControllerState();
+  _PlaybackDisplayerState createState() => _PlaybackDisplayerState();
 }
 
-class _PlaybackControllerState extends State<PlaybackController>
+class _PlaybackDisplayerState extends State<PlaybackDisplayer>
     with TickerProviderStateMixin {
-  CurrentlyPlaying current = CurrentlyPlaying(track: null, isPlaying: false);
   bool waiting = false;
   bool isPlaying = false;
 
@@ -30,7 +24,7 @@ class _PlaybackControllerState extends State<PlaybackController>
     super.initState();
 
     _animationController = AnimationController(
-        value: current.isPlaying ? 1 : 0,
+        value: widget.current.isPlaying ? 1 : 0,
         vsync: this,
         duration: Duration(milliseconds: 250));
 
@@ -50,47 +44,14 @@ class _PlaybackControllerState extends State<PlaybackController>
   }
 
   void _updatePlayerState() async {
-    current = await currentlyPlaying(widget.hostToken);
-
-    FirebaseFirestore.instance
-        .collection(fs.Collection.parties)
-        .doc(widget.partyId)
-        .update({fs.Party.currentlyPlaying: current.toFirestoreObject()});
-
     setState(() {
       if (!waiting) {
-        isPlaying = current.isPlaying;
-        current.isPlaying
+        isPlaying = widget.current.isPlaying;
+        widget.current.isPlaying
             ? _animationController.forward()
             : _animationController.reverse();
       }
     });
-  }
-
-  void _togglePlaying() async {
-    waiting = true;
-    var animation = isPlaying
-        ? _animationController.reverse()
-        : _animationController.forward();
-
-    isPlaying = !isPlaying;
-    setState(() {}); // Make animation happen.
-
-    if (current.track == null) {
-      await animation;
-    } else {
-      isPlaying
-          ? await resumePlayback(widget.hostToken)
-          : await pausePlayback(widget.hostToken);
-    }
-
-    waiting = false;
-    _updatePlayerState();
-  }
-
-  void _skipToNext() async {
-    await skipToNext(widget.hostToken);
-    _updatePlayerState();
   }
 
   @override
@@ -98,9 +59,10 @@ class _PlaybackControllerState extends State<PlaybackController>
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (current.track != null)
+        if (widget.current.track != null)
           Image.network(
-            current.track!.imageObjects[current.track!.imageObjects.length - 1]
+            widget.current.track!
+                    .imageObjects[widget.current.track!.imageObjects.length - 1]
                 ['url'],
           ),
         Expanded(
@@ -111,14 +73,14 @@ class _PlaybackControllerState extends State<PlaybackController>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoSizeText(
-                  current.track?.name ?? "",
+                  widget.current.track?.name ?? "",
                   style: Theme.of(context).textTheme.bodyText1?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
                 ),
                 AutoSizeText(
-                  current.track?.artists.join(', ') ?? "",
+                  widget.current.track?.artists.join(', ') ?? "",
                   style: Theme.of(context)
                       .textTheme
                       .bodyText2
@@ -128,16 +90,20 @@ class _PlaybackControllerState extends State<PlaybackController>
             ),
           ),
         ),
-        IconButton(
-          onPressed: _togglePlaying,
-          icon: AnimatedIcon(
+        Padding(
+          child: AnimatedIcon(
             icon: AnimatedIcons.play_pause,
+            color: Colors.grey,
             progress: _animationController,
           ),
+          padding: const EdgeInsets.all(8.0),
         ),
-        IconButton(
-          onPressed: _skipToNext,
-          icon: Icon(Icons.skip_next_outlined),
+        Padding(
+          child: Icon(
+            Icons.skip_next_outlined,
+            color: Colors.grey,
+          ),
+          padding: const EdgeInsets.all(8.0),
         ),
       ],
     );

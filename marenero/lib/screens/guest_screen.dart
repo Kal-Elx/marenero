@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:marenero/widgets/playback_displayer.dart';
 import '../utils/firestore_values.dart' as fs;
 
 import '../widgets/party_builder.dart';
 import '../widgets/party_app_bar_title.dart';
 import '../widgets/participants_list.dart';
 import '../widgets/rounded_divider.dart';
-import '../widgets/playback_controller.dart';
 import 'select_tracks_screen.dart';
 
 class GuestScreen extends StatefulWidget {
+  static const routeName = '/guest';
   final String partyId;
   final String userId;
 
@@ -74,11 +75,13 @@ class _GuestScreenState extends State<GuestScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.search),
-                    TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Search for songs to queue'),
-                      style: Theme.of(context).textTheme.bodyText1,
+                    Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: 'Search for songs to queue'),
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
                     ),
                   ],
                 ),
@@ -92,10 +95,7 @@ class _GuestScreenState extends State<GuestScreen> {
                 ),
               ),
               RoundedDivider(height: 4.0),
-              PlaybackController(
-                forHost: false,
-                spotifyToken: party.spotifyToken,
-              ),
+              PlaybackDisplayer(current: party.currentlyPlaying),
             ],
           ),
         ),

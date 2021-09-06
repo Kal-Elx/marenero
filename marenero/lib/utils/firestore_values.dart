@@ -8,10 +8,12 @@ class Party {
   const Party._();
   static const code = 'code';
   static const participants = 'participants';
-  static const spotifyToken = 'spotify_token'; // TODO: remove when fully replaced by accessToken
+  static const spotifyToken =
+      'spotify_token'; // TODO: remove when fully replaced by accessToken
   static const accessToken = 'token';
   static const songsToQueue = 'songs_to_queue';
   static const queuedTracks = 'tracks';
+  static const currentlyPlaying = 'currently_playing';
 }
 
 class Participant {
@@ -28,6 +30,12 @@ class MyTrack {
   static const artists = 'artists';
   static const imageObjects = 'imageObjects';
   static const uid = 'uid';
+}
+
+class CurrentlyPlaying {
+  const CurrentlyPlaying._();
+  static const track = 'track';
+  static const isPlaying = 'isPlaying';
 }
 
 class SpotifyAppInfo {

@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
+import 'package:marenero/models/currently_playing.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'dart:convert';
 
@@ -21,6 +22,7 @@ import 'select_tracks_screen.dart';
 
 class HostScreen extends StatefulWidget {
   static const routeName = '/host';
+  late final String hostToken;
 
   @override
   _HostScreenState createState() => _HostScreenState();
@@ -43,19 +45,21 @@ class _HostScreenState extends State<HostScreen> {
         .collection(fs.Collection.appInfo)
         .doc(fs.SpotifyAppInfo.document)
         .get();
-    final spotifyToken = await getAuthenticationToken(
+    widget.hostToken = await getAuthenticationToken(
       clientId: appInfo.get(fs.SpotifyAppInfo.clientId),
       redirectUrl: appInfo.get(fs.SpotifyAppInfo.redirectUrl),
     );
     participant = Participant(
-      name: await _getDisplayName(spotifyToken),
+      name: await _getDisplayName(widget.hostToken),
       host: true,
     );
 
+    CurrentlyPlaying current = CurrentlyPlaying(track: null, isPlaying: false);
+
     var docRef = await _firestore.collection(fs.Collection.parties).add({
-      fs.Party.spotifyToken: spotifyToken,
       fs.Party.participants: [participant.toFirestoreObject()],
       fs.Party.songsToQueue: 3,
+      fs.Party.currentlyPlaying: current.toFirestoreObject(),
     });
     _partyId = docRef.id;
     return docRef.id;
@@ -81,7 +85,7 @@ class _HostScreenState extends State<HostScreen> {
     final tracks = party.queuedTracks;
     tracks.shuffle();
     for (final track in tracks) {
-      await queueTrack(party.spotifyToken, track);
+      await queueTrack(widget.hostToken, track);
     }
     await _firestore
         .collection(fs.Collection.parties)
@@ -197,8 +201,8 @@ class _HostScreenState extends State<HostScreen> {
                     ),
                     RoundedDivider(height: 4.0),
                     PlaybackController(
-                      forHost: true,
-                      spotifyToken: party.spotifyToken,
+                      partyId: partyId,
+                      hostToken: widget.hostToken,
                     ),
                   ],
                 ),
