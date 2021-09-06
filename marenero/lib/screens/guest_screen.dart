@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:marenero/models/party.dart';
 import 'package:marenero/widgets/playback_displayer.dart';
 import '../utils/firestore_values.dart' as fs;
 
@@ -34,9 +35,20 @@ class _GuestScreenState extends State<GuestScreen> {
 
   /// Removes the user from the party when the user leaves.
   void _cleanUp() {
-    _firestore.collection(fs.Collection.parties).doc(widget.partyId).update({
-      fs.Party.participants: FieldValue.arrayRemove([widget.userId])
-    });
+    _firestore.collection(fs.Collection.parties).doc(widget.partyId).get().then(
+          (snapshot) => _firestore.collection(fs.Collection.parties).doc(widget.partyId).update(
+            {
+              fs.Party.participants: FieldValue.arrayRemove(
+                [
+                  Party.fromFirestoreObject(snapshot)
+                      .participants
+                      .firstWhere((participant) => participant.id == widget.userId)
+                      .toFirestoreObject()
+                ],
+              )
+            },
+          ),
+        );
   }
 
   @override
@@ -78,8 +90,7 @@ class _GuestScreenState extends State<GuestScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 8.0),
                       child: TextField(
-                        decoration: InputDecoration(
-                            hintText: 'Search for songs to queue'),
+                        decoration: InputDecoration(hintText: 'Search for songs to queue'),
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     ),

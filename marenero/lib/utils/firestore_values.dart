@@ -8,8 +8,6 @@ class Party {
   const Party._();
   static const code = 'code';
   static const participants = 'participants';
-  static const spotifyToken =
-      'spotify_token'; // TODO: remove when fully replaced by accessToken
   static const accessToken = 'token';
   static const songsToQueue = 'songs_to_queue';
   static const queuedTracks = 'tracks';
