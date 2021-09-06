@@ -38,13 +38,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
                       userId: userId,
                     ),
                 settings: const RouteSettings(name: GuestScreen.routeName)),
-          )
-              .then((value) {
-            _firestore.collection(fs.Collection.parties).doc(partyId).update({
-              fs.Party.participants: FieldValue.arrayRemove([userId])
-            });
-            return value;
-          });
+          );
         });
   }
 
