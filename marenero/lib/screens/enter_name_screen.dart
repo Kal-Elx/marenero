@@ -30,14 +30,21 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
         code: widget.partyCode,
         name: _name,
         onFoundParty: (partyId, userId) {
-          Navigator.of(context).pushReplacement(
+          Navigator.of(context)
+              .pushReplacement(
             MaterialPageRoute(
-              builder: (_) => GuestScreen(
-                partyId: partyId,
-                userId: userId,
-              ),
-            ),
-          );
+                builder: (_) => GuestScreen(
+                      partyId: partyId,
+                      userId: userId,
+                    ),
+                settings: const RouteSettings(name: GuestScreen.routeName)),
+          )
+              .then((value) {
+            _firestore.collection(fs.Collection.parties).doc(partyId).update({
+              fs.Party.participants: FieldValue.arrayRemove([userId])
+            });
+            return value;
+          });
         });
   }
 
@@ -58,15 +65,6 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
           [user.toFirestoreObject()],
         )
       });
-
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => GuestScreen(
-            partyId: partyId,
-            userId: user.id,
-          ),
-        ),
-      );
       onFoundParty(partyId, user.id);
     } else {
       Navigator.of(context).pushReplacement(

@@ -23,12 +23,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> joinParty() async {
     if (await _partyExists(code: partyCode)) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => EnterNameScreen(
-            partyCode: partyCode,
-          ),
-        ),
+            builder: (_) => EnterNameScreen(
+                  partyCode: partyCode,
+                ),
+            settings: const RouteSettings(name: EnterNameScreen.routeName)),
       );
     } else {
       setState(() {
