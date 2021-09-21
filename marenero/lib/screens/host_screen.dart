@@ -1,11 +1,11 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
-import 'package:marenero/models/currently_playing.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'dart:convert';
 
+import '../models/currently_playing.dart';
 import '../widgets/party_builder.dart';
 import '../widgets/participants_list.dart';
 import '../models/participant.dart';
@@ -41,10 +41,7 @@ class _HostScreenState extends State<HostScreen> {
 
   /// Authenticates Spotify user and creates a party session on firestore.
   Future<String> _createParty() async {
-    final appInfo = await _firestore
-        .collection(fs.Collection.appInfo)
-        .doc(fs.SpotifyAppInfo.document)
-        .get();
+    final appInfo = await _firestore.collection(fs.Collection.appInfo).doc(fs.SpotifyAppInfo.document).get();
     widget.hostToken = await getAuthenticationToken(
       clientId: appInfo.get(fs.SpotifyAppInfo.clientId),
       redirectUrl: appInfo.get(fs.SpotifyAppInfo.redirectUrl),
@@ -68,8 +65,7 @@ class _HostScreenState extends State<HostScreen> {
   /// Returns the display name of the current Spotify user.
   Future<String> _getDisplayName(String token) async {
     String url = "https://api.spotify.com/v1/me";
-    final response = await http
-        .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
+    final response = await http.get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
     var responseData = json.decode(response.body);
     return responseData["display_name"];
   }
@@ -87,10 +83,7 @@ class _HostScreenState extends State<HostScreen> {
     for (final track in tracks) {
       await queueTrack(widget.hostToken, track);
     }
-    await _firestore
-        .collection(fs.Collection.parties)
-        .doc(party.id)
-        .update({fs.Party.queuedTracks: []});
+    await _firestore.collection(fs.Collection.parties).doc(party.id).update({fs.Party.queuedTracks: []});
   }
 
   @override
@@ -99,7 +92,7 @@ class _HostScreenState extends State<HostScreen> {
       future: _createParty(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          var partyId = snapshot.data.toString();
+          final partyId = snapshot.data.toString();
 
           FocusScope.of(context).unfocus();
 
@@ -138,8 +131,7 @@ class _HostScreenState extends State<HostScreen> {
                           Padding(
                             padding: EdgeInsets.only(left: 8.0),
                             child: TextField(
-                              decoration: InputDecoration(
-                                  hintText: 'Search for songs to queue'),
+                              decoration: InputDecoration(hintText: 'Search for songs to queue'),
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
                           ),
@@ -158,10 +150,7 @@ class _HostScreenState extends State<HostScreen> {
                     PartySettings(
                       selected: party.songsToQueue,
                       onSelect: (selected) {
-                        _firestore
-                            .collection(fs.Collection.parties)
-                            .doc(partyId)
-                            .update(
+                        _firestore.collection(fs.Collection.parties).doc(partyId).update(
                           {fs.Party.songsToQueue: selected},
                         );
                       },
@@ -182,16 +171,13 @@ class _HostScreenState extends State<HostScreen> {
                             },
                             builder: (_, onTap) {
                               return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                padding: const EdgeInsets.symmetric(vertical: 4.0),
                                 child: OutlinedButton(
                                   onPressed: onTap,
-                                  child: Text('Queue all songs',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold)),
+                                  child: Text(
+                                    'Queue all songs',
+                                    style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               );
                             },

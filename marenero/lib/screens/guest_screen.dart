@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:marenero/models/party.dart';
-import 'package:marenero/widgets/playback_displayer.dart';
-import '../utils/firestore_values.dart' as fs;
 
+import '../utils/firestore_values.dart' as fs;
+import '../widgets/playback_displayer.dart';
 import '../widgets/party_builder.dart';
 import '../widgets/party_app_bar_title.dart';
 import '../widgets/participants_list.dart';
 import '../widgets/rounded_divider.dart';
+import '../models/party.dart';
 import 'select_tracks_screen.dart';
 
 class GuestScreen extends StatefulWidget {

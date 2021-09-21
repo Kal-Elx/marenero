@@ -1,7 +1,8 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:marenero/models/currently_playing.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'dart:async';
+
+import '../models/currently_playing.dart';
 
 class PlaybackDisplayer extends StatefulWidget {
   final CurrentlyPlaying current;
@@ -11,8 +12,7 @@ class PlaybackDisplayer extends StatefulWidget {
   _PlaybackDisplayerState createState() => _PlaybackDisplayerState();
 }
 
-class _PlaybackDisplayerState extends State<PlaybackDisplayer>
-    with TickerProviderStateMixin {
+class _PlaybackDisplayerState extends State<PlaybackDisplayer> with TickerProviderStateMixin {
   bool waiting = false;
   bool isPlaying = false;
 
@@ -24,16 +24,13 @@ class _PlaybackDisplayerState extends State<PlaybackDisplayer>
     super.initState();
 
     _animationController = AnimationController(
-        value: widget.current.isPlaying ? 1 : 0,
-        vsync: this,
-        duration: Duration(milliseconds: 250));
+        value: widget.current.isPlaying ? 1 : 0, vsync: this, duration: Duration(milliseconds: 250));
 
     // Update player state once immediatley.
     _updatePlayerState();
 
     // Update player state periodicly.
-    _timer = new Timer.periodic(Duration(milliseconds: 1000),
-        (Timer t) async => {_updatePlayerState()});
+    _timer = new Timer.periodic(Duration(milliseconds: 1000), (Timer t) async => {_updatePlayerState()});
   }
 
   @override
@@ -47,9 +44,7 @@ class _PlaybackDisplayerState extends State<PlaybackDisplayer>
     setState(() {
       if (!waiting) {
         isPlaying = widget.current.isPlaying;
-        widget.current.isPlaying
-            ? _animationController.forward()
-            : _animationController.reverse();
+        widget.current.isPlaying ? _animationController.forward() : _animationController.reverse();
       }
     });
   }
@@ -61,9 +56,7 @@ class _PlaybackDisplayerState extends State<PlaybackDisplayer>
       children: [
         if (widget.current.track != null)
           Image.network(
-            widget.current.track!
-                    .imageObjects[widget.current.track!.imageObjects.length - 1]
-                ['url'],
+            widget.current.track!.imageObjects[widget.current.track!.imageObjects.length - 1]['url'],
           ),
         Expanded(
           child: Padding(
@@ -81,10 +74,7 @@ class _PlaybackDisplayerState extends State<PlaybackDisplayer>
                 ),
                 AutoSizeText(
                   widget.current.track?.artists.join(', ') ?? "",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2
-                      ?.copyWith(color: Colors.white70),
+                  style: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.white70),
                 ),
               ],
             ),

@@ -25,10 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (await _partyExists(code: partyCode)) {
       Navigator.of(context).push(
         MaterialPageRoute(
-            builder: (_) => EnterNameScreen(
-                  partyCode: partyCode,
-                ),
-            settings: const RouteSettings(name: EnterNameScreen.routeName)),
+          builder: (_) => EnterNameScreen(
+            partyCode: partyCode,
+          ),
+        ),
       );
     } else {
       setState(() {
@@ -51,10 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isLoading = true;
     });
-    final partySnapshot = await _firestore
-        .collection(fs.Collection.parties)
-        .where(fs.Party.code, isEqualTo: code)
-        .get();
+    final partySnapshot =
+        await _firestore.collection(fs.Collection.parties).where(fs.Party.code, isEqualTo: code).get();
     setState(() {
       _isLoading = false;
     });
@@ -71,18 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
         progressIndicator: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-                padding: EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(color: Colors.white)),
+            Padding(padding: EdgeInsets.all(8.0), child: CircularProgressIndicator(color: Colors.white)),
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
                 "Connecting to party",
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
               ),
             )
           ],
@@ -114,32 +107,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: EdgeInsets.fromLTRB(15, 0, 15, 4),
                         child: TextField(
                           textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
                           decoration: InputDecoration(
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 0.0),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: partyCodeError
-                                      ? Colors.red
-                                      : Colors.grey),
+                              borderSide: BorderSide(color: partyCodeError ? Colors.red : Colors.grey),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: partyCodeError
-                                      ? Colors.red
-                                      : Colors.black),
+                              borderSide: BorderSide(color: partyCodeError ? Colors.red : Colors.black),
                             ),
                             hintText: 'Party Code',
-                            hintStyle:
-                                Theme.of(context).textTheme.bodyText1!.copyWith(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            hintStyle: Theme.of(context).textTheme.bodyText1!.copyWith(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           onChanged: (text) {
                             partyCode = text;
@@ -151,15 +135,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: TextButton(
                           child: Text(
                             "Join Party",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
                           ),
                           style: TextButton.styleFrom(
                               primary: Colors.white,
-                              backgroundColor:
-                                  Theme.of(context).backgroundColor,
+                              backgroundColor: Theme.of(context).backgroundColor,
                               minimumSize: Size(320, 55)),
                           onPressed: joinParty,
                         ),
@@ -172,8 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.all(0.0),
                 child: Text(
                   'or',
-                  style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
                 ),
               ),
               Padding(
@@ -181,10 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: TextButton.icon(
                   label: Text(
                     "Host Party",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
                   ),
                   icon: RotatedBox(
                     quarterTurns: 3,
@@ -196,7 +175,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     minimumSize: Size(300, 55),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushNamed(HostScreen.routeName);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => HostScreen(),
+                      ),
+                    );
                   },
                 ),
               ),

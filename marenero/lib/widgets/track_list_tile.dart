@@ -27,7 +27,7 @@ class TrackListTile extends StatelessWidget {
       case 1:
         return TrackListTile(
           title: 'The song that has been stuck in your head all week',
-          artists: ['By that guy whos name you always forget'],
+          artists: ['By that guy whose name you always forget'],
           placeholder: true,
         );
       default:
@@ -52,10 +52,7 @@ class TrackListTile extends StatelessWidget {
       ),
       subtitle: AutoSizeText(
         artists.join(', '),
-        style: Theme.of(context)
-            .textTheme
-            .bodyText2
-            ?.copyWith(color: placeholder ? Colors.white30 : Colors.white70),
+        style: Theme.of(context).textTheme.bodyText2?.copyWith(color: placeholder ? Colors.white30 : Colors.white70),
       ),
       trailing: trailing ?? Icon(null),
     );

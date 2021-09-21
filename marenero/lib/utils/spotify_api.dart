@@ -1,9 +1,10 @@
-import 'package:marenero/models/currently_playing.dart';
-import 'package:marenero/models/my_track.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../models/currently_playing.dart';
+import '../models/my_track.dart';
 
 Future<String> getAuthenticationToken({
   required String clientId,
