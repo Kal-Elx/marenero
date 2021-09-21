@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
-import 'package:marenero/models/participant.dart';
+import '../models/participant.dart';
 import '../utils/firestore_values.dart' as fs;
 import 'guest_screen.dart';
 import 'party_is_over_screen.dart';
@@ -27,19 +27,19 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
       _isLoading = true;
     });
     _enterParty(
-        code: widget.partyCode,
-        name: _name,
-        onFoundParty: (partyId, userId) {
-          Navigator.of(context)
-              .pushReplacement(
-            MaterialPageRoute(
-                builder: (_) => GuestScreen(
-                      partyId: partyId,
-                      userId: userId,
-                    ),
-                settings: const RouteSettings(name: GuestScreen.routeName)),
-          );
-        });
+      code: widget.partyCode,
+      name: _name,
+      onFoundParty: (partyId, userId) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => GuestScreen(
+              partyId: partyId,
+              userId: userId,
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _enterParty({
@@ -47,10 +47,8 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
     required String name,
     required void Function(String partyId, String userId) onFoundParty,
   }) async {
-    final partySnapshot = await _firestore
-        .collection(fs.Collection.parties)
-        .where(fs.Party.code, isEqualTo: code)
-        .get();
+    final partySnapshot =
+        await _firestore.collection(fs.Collection.parties).where(fs.Party.code, isEqualTo: code).get();
     if (partySnapshot.docs.isNotEmpty) {
       var partyId = partySnapshot.docs.first.id;
       final user = Participant(name: name);
@@ -61,8 +59,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
       });
       onFoundParty(partyId, user.id);
     } else {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => PartyIsOverScreen()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => PartyIsOverScreen()));
     }
   }
 
@@ -76,18 +73,13 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
         progressIndicator: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-                padding: EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(color: Colors.white)),
+            Padding(padding: EdgeInsets.all(8.0), child: CircularProgressIndicator(color: Colors.white)),
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
                 "Connecting to party",
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
               ),
             )
           ],
@@ -115,14 +107,12 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
                         padding: EdgeInsets.fromLTRB(15, 0, 15, 4),
                         child: TextField(
                           textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
                           decoration: InputDecoration(
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 0.0),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.grey),
                             ),
@@ -130,11 +120,10 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
                               borderSide: BorderSide(color: Colors.black),
                             ),
                             hintText: 'Your name',
-                            hintStyle:
-                                Theme.of(context).textTheme.bodyText1!.copyWith(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            hintStyle: Theme.of(context).textTheme.bodyText1!.copyWith(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           onChanged: (text) {
                             _name = text;
@@ -146,15 +135,11 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
                         child: TextButton(
                           child: Text(
                             "Enter",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
                           ),
                           style: TextButton.styleFrom(
                               primary: Colors.white,
-                              backgroundColor:
-                                  Theme.of(context).backgroundColor,
+                              backgroundColor: Theme.of(context).backgroundColor,
                               minimumSize: Size(320, 55)),
                           onPressed: _onPressed,
                         ),

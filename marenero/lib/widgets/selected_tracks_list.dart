@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:marenero/models/my_track.dart';
-import 'package:marenero/widgets/track_list_tile.dart';
-//import 'package:spotify_sdk/models/track.dart';
+
+import '../models/my_track.dart';
+import '../widgets/track_list_tile.dart';
 
 class SelectedTracksList extends StatelessWidget {
   final List<MyTrack> tracks;
   final int songsToQueue;
   final Function(MyTrack) removeSelectedCallback;
 
-  SelectedTracksList(
-      {required this.tracks,
-      required this.songsToQueue,
-      required this.removeSelectedCallback});
+  SelectedTracksList({required this.tracks, required this.songsToQueue, required this.removeSelectedCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +27,7 @@ class SelectedTracksList extends StatelessWidget {
                 title: tracks[i].name,
                 artists: tracks[i].artists,
                 cover: Image.network(
-                  tracks[i].imageObjects[tracks[i].imageObjects.length - 1]
-                      ['url'],
+                  tracks[i].imageObjects[tracks[i].imageObjects.length - 1]['url'],
                   height: 50.0,
                   width: 50.0,
                 ),

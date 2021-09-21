@@ -1,5 +1,5 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 import '../models/participant.dart';
 import '../models/my_track.dart';
@@ -55,8 +55,7 @@ class ParticipantsList extends StatelessWidget {
               leading: Container(
                 width: 40.0,
                 alignment: Alignment.centerLeft,
-                child: Icon(
-                    participants[i].host ? Icons.music_note_outlined : null),
+                child: Icon(participants[i].host ? Icons.music_note_outlined : null),
               ),
               trailing: Container(
                   width: 40.0,

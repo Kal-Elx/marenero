@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../widgets/party_builder.dart';
-import 'search_tracks.dart';
+import '../widgets/search_tracks.dart';
 import '../widgets/selected_tracks_list.dart';
 import '../utils/firestore_values.dart' as fs;
 import '../models/my_track.dart';
@@ -22,8 +22,7 @@ class SelectTracksScreen extends StatefulWidget {
   State<SelectTracksScreen> createState() => _SelectTracksScreenState();
 }
 
-class _SelectTracksScreenState extends State<SelectTracksScreen>
-    with TickerProviderStateMixin {
+class _SelectTracksScreenState extends State<SelectTracksScreen> with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: 500),
     vsync: this,
@@ -47,22 +46,14 @@ class _SelectTracksScreenState extends State<SelectTracksScreen>
 
   addSelectedCallback(MyTrack selectedTrack) {
     selectedTrack.uid = widget.userId;
-    FirebaseFirestore.instance
-        .collection(fs.Collection.parties)
-        .doc(widget.partyId)
-        .update({
-      fs.Party.queuedTracks:
-          FieldValue.arrayUnion([selectedTrack.toFirestoreObject()])
+    FirebaseFirestore.instance.collection(fs.Collection.parties).doc(widget.partyId).update({
+      fs.Party.queuedTracks: FieldValue.arrayUnion([selectedTrack.toFirestoreObject()])
     });
   }
 
   removeSelectedCallback(MyTrack selectedTrack) {
-    FirebaseFirestore.instance
-        .collection(fs.Collection.parties)
-        .doc(widget.partyId)
-        .update({
-      fs.Party.queuedTracks:
-          FieldValue.arrayRemove([selectedTrack.toFirestoreObject()])
+    FirebaseFirestore.instance.collection(fs.Collection.parties).doc(widget.partyId).update({
+      fs.Party.queuedTracks: FieldValue.arrayRemove([selectedTrack.toFirestoreObject()])
     });
   }
 
@@ -71,9 +62,7 @@ class _SelectTracksScreenState extends State<SelectTracksScreen>
     return PartyBuilder(
         partyId: widget.partyId,
         builder: (context, party) {
-          final selectedTracks = party.queuedTracks
-              .where((track) => track.uid == widget.userId)
-              .toList();
+          final selectedTracks = party.queuedTracks.where((track) => track.uid == widget.userId).toList();
           return GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: Scaffold(
@@ -81,8 +70,7 @@ class _SelectTracksScreenState extends State<SelectTracksScreen>
                 title: Column(
                   children: [
                     Text(
-                      party.code.replaceAllMapped(
-                          RegExp(r".{2}"), (match) => "${match.group(0)} "),
+                      party.code.replaceAllMapped(RegExp(r".{2}"), (match) => "${match.group(0)} "),
                       style: Theme.of(context).textTheme.headline2,
                     ),
                     Text(
@@ -100,9 +88,7 @@ class _SelectTracksScreenState extends State<SelectTracksScreen>
                   children: [
                     RoundedDivider(),
                     Text(
-                      party.songsToQueue == 1
-                          ? 'Select a banger'
-                          : 'Select ${party.songsToQueue} bangers',
+                      party.songsToQueue == 1 ? 'Select a banger' : 'Select ${party.songsToQueue} bangers',
                       style: Theme.of(context).textTheme.headline3,
                     ),
                     SizeTransition(

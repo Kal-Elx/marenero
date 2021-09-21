@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/my_track.dart';
 import '../utils/spotify_api.dart';
-import '../widgets/track_list_tile.dart';
+import 'track_list_tile.dart';
 
 class SearchTracks extends StatefulWidget {
   final String spotifyToken;
@@ -44,8 +44,7 @@ class _SearchTracksState extends State<SearchTracks> {
 
   _searchTracks() async {
     if (myController.text.isNotEmpty) {
-      searchedTracks =
-          await searchTracks(widget.spotifyToken, myController.text);
+      searchedTracks = await searchTracks(widget.spotifyToken, myController.text);
       setState(() {});
     }
   }
@@ -84,9 +83,7 @@ class _SearchTracksState extends State<SearchTracks> {
               title: searchedTracks[i].name,
               artists: searchedTracks[i].artists,
               cover: Image.network(
-                searchedTracks[i]
-                        .imageObjects[searchedTracks[i].imageObjects.length - 1]
-                    ['url'],
+                searchedTracks[i].imageObjects[searchedTracks[i].imageObjects.length - 1]['url'],
                 height: 50.0,
                 width: 50.0,
               ),

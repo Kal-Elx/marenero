@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'design/app_theme.dart';
 import 'screens/home_screen.dart';
-import 'screens/host_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,9 +17,6 @@ class MyApp extends StatelessWidget {
       title: 'Marenero',
       theme: AppTheme().themeData,
       home: HomeScreen(),
-      routes: {
-        HostScreen.routeName: (ctx) => HostScreen(),
-      },
     );
   }
 }
