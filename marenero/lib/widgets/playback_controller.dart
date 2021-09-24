@@ -17,7 +17,8 @@ class PlaybackController extends StatefulWidget {
   _PlaybackControllerState createState() => _PlaybackControllerState();
 }
 
-class _PlaybackControllerState extends State<PlaybackController> with TickerProviderStateMixin {
+class _PlaybackControllerState extends State<PlaybackController>
+    with TickerProviderStateMixin {
   CurrentlyPlaying current = CurrentlyPlaying(track: null, isPlaying: false);
   bool waiting = false;
   bool isPlaying = false;
@@ -29,14 +30,17 @@ class _PlaybackControllerState extends State<PlaybackController> with TickerProv
   void initState() {
     super.initState();
 
-    _animationController =
-        AnimationController(value: current.isPlaying ? 1 : 0, vsync: this, duration: Duration(milliseconds: 250));
+    _animationController = AnimationController(
+        value: current.isPlaying ? 1 : 0,
+        vsync: this,
+        duration: Duration(milliseconds: 250));
 
     // Update player state once immediatley.
     _updatePlayerState();
 
     // Update player state periodicly.
-    _timer = new Timer.periodic(Duration(milliseconds: 1000), (Timer t) async => {_updatePlayerState()});
+    _timer = new Timer.periodic(Duration(milliseconds: 1000),
+        (Timer t) async => {_updatePlayerState()});
   }
 
   @override
@@ -57,14 +61,18 @@ class _PlaybackControllerState extends State<PlaybackController> with TickerProv
     setState(() {
       if (!waiting) {
         isPlaying = current.isPlaying;
-        current.isPlaying ? _animationController.forward() : _animationController.reverse();
+        current.isPlaying
+            ? _animationController.forward()
+            : _animationController.reverse();
       }
     });
   }
 
   void _togglePlaying() async {
     waiting = true;
-    var animation = isPlaying ? _animationController.reverse() : _animationController.forward();
+    var animation = isPlaying
+        ? _animationController.reverse()
+        : _animationController.forward();
 
     isPlaying = !isPlaying;
     setState(() {}); // Make animation happen.
@@ -72,7 +80,9 @@ class _PlaybackControllerState extends State<PlaybackController> with TickerProv
     if (current.track == null) {
       await animation;
     } else {
-      isPlaying ? await resumePlayback(widget.hostToken) : await pausePlayback(widget.hostToken);
+      isPlaying
+          ? await resumePlayback(widget.hostToken)
+          : await pausePlayback(widget.hostToken);
     }
 
     waiting = false;
@@ -89,10 +99,16 @@ class _PlaybackControllerState extends State<PlaybackController> with TickerProv
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (current.track != null)
-          Image.network(
-            current.track!.imageObjects[current.track!.imageObjects.length - 1]['url'],
-          ),
+        current.track != null
+            ? Image.network(
+                current.track!
+                        .imageObjects[current.track!.imageObjects.length - 1]
+                    ['url'],
+              )
+            : SizedBox(
+                width: 64,
+                height: 64,
+              ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -101,31 +117,37 @@ class _PlaybackControllerState extends State<PlaybackController> with TickerProv
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoSizeText(
-                  current.track?.name ?? "",
+                  current.track?.name ?? "DJ, let it play!",
                   style: Theme.of(context).textTheme.bodyText1?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
                 ),
                 AutoSizeText(
-                  current.track?.artists.join(', ') ?? "",
-                  style: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.white70),
+                  current.track?.artists.join(', ') ??
+                      "Play Spotify on your preferred device",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2
+                      ?.copyWith(color: Colors.white70),
                 ),
               ],
             ),
           ),
         ),
-        IconButton(
-          onPressed: _togglePlaying,
-          icon: AnimatedIcon(
-            icon: AnimatedIcons.play_pause,
-            progress: _animationController,
+        if (current.track != null)
+          IconButton(
+            onPressed: _togglePlaying,
+            icon: AnimatedIcon(
+              icon: AnimatedIcons.play_pause,
+              progress: _animationController,
+            ),
           ),
-        ),
-        IconButton(
-          onPressed: _skipToNext,
-          icon: Icon(Icons.skip_next_outlined),
-        ),
+        if (current.track != null)
+          IconButton(
+            onPressed: _skipToNext,
+            icon: Icon(Icons.skip_next_outlined),
+          ),
       ],
     );
   }

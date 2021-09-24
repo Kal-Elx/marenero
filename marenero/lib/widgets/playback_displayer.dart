@@ -12,7 +12,8 @@ class PlaybackDisplayer extends StatefulWidget {
   _PlaybackDisplayerState createState() => _PlaybackDisplayerState();
 }
 
-class _PlaybackDisplayerState extends State<PlaybackDisplayer> with TickerProviderStateMixin {
+class _PlaybackDisplayerState extends State<PlaybackDisplayer>
+    with TickerProviderStateMixin {
   bool waiting = false;
   bool isPlaying = false;
 
@@ -24,13 +25,16 @@ class _PlaybackDisplayerState extends State<PlaybackDisplayer> with TickerProvid
     super.initState();
 
     _animationController = AnimationController(
-        value: widget.current.isPlaying ? 1 : 0, vsync: this, duration: Duration(milliseconds: 250));
+        value: widget.current.isPlaying ? 1 : 0,
+        vsync: this,
+        duration: Duration(milliseconds: 250));
 
     // Update player state once immediatley.
     _updatePlayerState();
 
     // Update player state periodicly.
-    _timer = new Timer.periodic(Duration(milliseconds: 1000), (Timer t) async => {_updatePlayerState()});
+    _timer = new Timer.periodic(Duration(milliseconds: 1000),
+        (Timer t) async => {_updatePlayerState()});
   }
 
   @override
@@ -44,7 +48,9 @@ class _PlaybackDisplayerState extends State<PlaybackDisplayer> with TickerProvid
     setState(() {
       if (!waiting) {
         isPlaying = widget.current.isPlaying;
-        widget.current.isPlaying ? _animationController.forward() : _animationController.reverse();
+        widget.current.isPlaying
+            ? _animationController.forward()
+            : _animationController.reverse();
       }
     });
   }
@@ -54,10 +60,12 @@ class _PlaybackDisplayerState extends State<PlaybackDisplayer> with TickerProvid
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (widget.current.track != null)
-          Image.network(
-            widget.current.track!.imageObjects[widget.current.track!.imageObjects.length - 1]['url'],
-          ),
+        widget.current.track != null
+            ? Image.network(
+                widget.current.track!.imageObjects[
+                    widget.current.track!.imageObjects.length - 1]['url'],
+              )
+            : SizedBox(width: 64, height: 64),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -66,35 +74,41 @@ class _PlaybackDisplayerState extends State<PlaybackDisplayer> with TickerProvid
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoSizeText(
-                  widget.current.track?.name ?? "",
+                  widget.current.track?.name ?? "DJ, let it play!",
                   style: Theme.of(context).textTheme.bodyText1?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
                 ),
                 AutoSizeText(
-                  widget.current.track?.artists.join(', ') ?? "",
-                  style: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.white70),
+                  widget.current.track?.artists.join(', ') ??
+                      "Waiting for host to play from Spotify",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2
+                      ?.copyWith(color: Colors.white70),
                 ),
               ],
             ),
           ),
         ),
-        Padding(
-          child: AnimatedIcon(
-            icon: AnimatedIcons.play_pause,
-            color: Colors.grey,
-            progress: _animationController,
+        if (widget.current.track != null)
+          Padding(
+            child: AnimatedIcon(
+              icon: AnimatedIcons.play_pause,
+              color: Colors.grey,
+              progress: _animationController,
+            ),
+            padding: const EdgeInsets.all(8.0),
           ),
-          padding: const EdgeInsets.all(8.0),
-        ),
-        Padding(
-          child: Icon(
-            Icons.skip_next_outlined,
-            color: Colors.grey,
+        if (widget.current.track != null)
+          Padding(
+            child: Icon(
+              Icons.skip_next_outlined,
+              color: Colors.grey,
+            ),
+            padding: const EdgeInsets.all(8.0),
           ),
-          padding: const EdgeInsets.all(8.0),
-        ),
       ],
     );
   }
