@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:marenero/design/text_logo.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../utils/firestore_values.dart' as fs;
 
+import '../utils/firestore_values.dart' as fs;
 import 'enter_name_screen.dart';
 import 'host_screen.dart';
 
@@ -62,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
 
     return Scaffold(
       body: LoadingOverlay(
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text(
                 "Connecting to party",
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
               ),
             )
           ],
@@ -107,10 +107,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: EdgeInsets.fromLTRB(15, 0, 15, 4),
                         child: TextField(
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: theme.textTheme.bodyText1!.copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
                             enabledBorder: OutlineInputBorder(
@@ -120,10 +120,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderSide: BorderSide(color: partyCodeError ? Colors.red : Colors.black),
                             ),
                             hintText: 'Party Code',
-                            hintStyle: Theme.of(context).textTheme.bodyText1!.copyWith(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            hintStyle: theme.textTheme.bodyText1!.copyWith(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onChanged: (text) {
                             partyCode = text;
@@ -135,11 +135,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: TextButton(
                           child: Text(
                             "Join Party",
-                            style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
+                            style: theme.textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
                           ),
                           style: TextButton.styleFrom(
                               primary: Colors.white,
-                              backgroundColor: Theme.of(context).backgroundColor,
+                              backgroundColor: theme.backgroundColor,
                               minimumSize: Size(320, 55)),
                           onPressed: joinParty,
                         ),
@@ -152,10 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.all(0.0),
                 child: Text(
                   'or',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                  style: theme.textTheme.bodyText1!.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
                 ),
               ),
               Padding(
@@ -163,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: TextButton.icon(
                   label: Text(
                     "Host Party",
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
                   ),
                   icon: RotatedBox(
                     quarterTurns: 3,
@@ -181,6 +178,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   },
+                ),
+              ),
+              Container(
+                constraints: BoxConstraints(maxWidth: 380),
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Host a party and share the code with your friends',
+                      style: theme.textTheme.bodyText2!.copyWith(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      'Put a few good songs in the queue, we shuffle them for you',
+                      style: theme.textTheme.bodyText2!.copyWith(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      'Enjoy the music, can you guess who queued which song?',
+                      style: theme.textTheme.bodyText2!.copyWith(fontWeight: FontWeight.w500),
+                    ),
+                  ],
                 ),
               ),
             ],

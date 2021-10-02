@@ -40,7 +40,7 @@ class AppTheme {
       textTheme: TextTheme().copyWith(
         //* Heading
         headline1: GoogleFonts.montserrat(
-          fontSize: 60.0,
+          fontSize: 56.0,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
