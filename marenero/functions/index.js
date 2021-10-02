@@ -100,3 +100,29 @@ exports.setAccessToken = functions.firestore.document("parties/{documentId}")
             });
       });
     });
+
+exports.addCreationDate = functions.firestore.document("parties/{documentId}")
+    .onCreate((snap, _) => {
+      const created = admin.firestore.FieldValue.serverTimestamp();
+      return snap.ref.set({created}, {merge: true});
+    });
+
+exports.cleanup = functions.pubsub.schedule("every 24 hours")
+    .onRun((_) => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      return admin.firestore().collection("parties").where(
+          "created", "<", admin.firestore.Timestamp.fromDate(yesterday)).get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              const batch = admin.firestore().batch();
+
+              querySnapshot.forEach(function(doc) {
+                batch.delete(doc.ref);
+              });
+
+              return batch.commit();
+            });
+          });
+    });
