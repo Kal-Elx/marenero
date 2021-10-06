@@ -42,4 +42,8 @@ class Party {
           CurrentlyPlaying.fromFirestoreObject(data[fs.Party.currentlyPlaying]),
     );
   }
+
+  /// Returns whether the user is using Spotify on a device.
+  /// If this is true we can queue songs that lands in the queue.
+  bool get isConnected => currentlyPlaying.track != null;
 }

@@ -155,34 +155,48 @@ class _HostScreenState extends State<HostScreen> {
                         );
                       },
                     ),
-                    Padding(
+                    Container(
+                      height: 120,
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Column(
-                        children: [
-                          AutoSizeText(
-                            'Is everyone ready?',
-                            maxLines: 1,
-                            style: Theme.of(context).textTheme.headline3,
-                          ),
-                          SizedBox(height: 12),
-                          TapDebouncer(
-                            onTap: () async {
-                              await queueAllSongs(party);
-                            },
-                            builder: (_, onTap) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                                child: OutlinedButton(
-                                  onPressed: onTap,
-                                  child: Text(
-                                    'Queue all songs',
-                                    style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
+                      child: AnimatedCrossFade(
+                        duration: const Duration(milliseconds: 200),
+                        crossFadeState: party.isConnected ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                        firstChild: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            AutoSizeText(
+                              'Is everyone ready?',
+                              maxLines: 1,
+                              style: Theme.of(context).textTheme.headline3,
+                            ),
+                            TapDebouncer(
+                              onTap: () async {
+                                await queueAllSongs(party);
+                              },
+                              builder: (_, onTap) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                  child: OutlinedButton(
+                                    onPressed: onTap,
+                                    child: Text(
+                                      'Queue all songs',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        secondChild: Center(
+                          child: AutoSizeText(
+                            'It\'s way too quiet in here\n'
+                            'Play some music with your Spotify account to get this party started',
+                            style: Theme.of(context).textTheme.headline3,
+                            textAlign: TextAlign.center,
                           ),
-                        ],
+                        ),
                       ),
                     ),
                     RoundedDivider(height: 4.0),
