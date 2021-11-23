@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import '../widgets/party_builder.dart';
 import '../widgets/search_tracks.dart';
@@ -8,12 +9,14 @@ import '../widgets/selected_tracks_list.dart';
 import '../utils/firestore_values.dart' as fs;
 import '../models/my_track.dart';
 import '../widgets/rounded_divider.dart';
+import '../utils/analytics.dart';
 
 class SelectTracksScreen extends StatefulWidget {
   final String partyId;
   final String userId;
+  final analytics = FirebaseAnalytics();
 
-  const SelectTracksScreen({
+  SelectTracksScreen({
     required this.partyId,
     required this.userId,
   });
@@ -49,12 +52,14 @@ class _SelectTracksScreenState extends State<SelectTracksScreen> with TickerProv
     FirebaseFirestore.instance.collection(fs.Collection.parties).doc(widget.partyId).update({
       fs.Party.queuedTracks: FieldValue.arrayUnion([selectedTrack.toFirestoreObject()])
     });
+    widget.analytics.logAddTrack(selectedTrack);
   }
 
   removeSelectedCallback(MyTrack selectedTrack) {
     FirebaseFirestore.instance.collection(fs.Collection.parties).doc(widget.partyId).update({
       fs.Party.queuedTracks: FieldValue.arrayRemove([selectedTrack.toFirestoreObject()])
     });
+    widget.analytics.logRemoveTrack(selectedTrack);
   }
 
   @override
