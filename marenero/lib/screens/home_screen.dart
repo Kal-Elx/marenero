@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:marenero/design/text_logo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import '../utils/firestore_values.dart' as fs;
+import '../utils/analytics.dart';
 import 'enter_name_screen.dart';
 import 'host_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  final analytics = FirebaseAnalytics();
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -29,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       );
+      widget.analytics.logJoinParty(code: partyCode);
     } else {
       setState(() {
         partyCodeError = true;

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'dart:convert';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import '../models/currently_playing.dart';
 import '../widgets/party_builder.dart';
@@ -19,9 +20,11 @@ import '../widgets/rounded_divider.dart';
 import '../widgets/playback_controller.dart';
 import '../widgets/party_settings.dart';
 import 'select_tracks_screen.dart';
+import '../utils/analytics.dart';
 
 class HostScreen extends StatefulWidget {
   static const routeName = '/host';
+  final analytics = FirebaseAnalytics();
   late final String hostToken;
 
   @override
@@ -59,6 +62,9 @@ class _HostScreenState extends State<HostScreen> {
       fs.Party.currentlyPlaying: current.toFirestoreObject(),
     });
     _partyId = docRef.id;
+
+    widget.analytics.logHostParty(code: docRef.id);
+
     return docRef.id;
   }
 
@@ -84,6 +90,7 @@ class _HostScreenState extends State<HostScreen> {
       await queueTrack(widget.hostToken, track);
     }
     await _firestore.collection(fs.Collection.parties).doc(party.id).update({fs.Party.queuedTracks: []});
+    widget.analytics.logQueueAllTracks(tracks);
   }
 
   @override
