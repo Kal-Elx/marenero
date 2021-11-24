@@ -18,7 +18,7 @@ extension Analytics on FirebaseAnalytics {
   Future<void> logRemoveTrack(MyTrack track) => logEvent(name: 'remove_track', parameters: track.toAnalyticsObject());
 
   Future<void> logQueueAllTracks(List<MyTrack> tracks) => logEvent(
-        name: 'add_track',
+        name: 'queue_all_tracks',
         parameters: {
           'count': tracks.length,
           'tracks': tracks.map((track) => track.toAnalyticsObject()).toList(growable: false),
