@@ -14,7 +14,7 @@ import '../utils/analytics.dart';
 class SelectTracksScreen extends StatefulWidget {
   final String partyId;
   final String userId;
-  final analytics = FirebaseAnalytics();
+  final analytics = FirebaseAnalytics.instance;
 
   SelectTracksScreen({
     required this.partyId,

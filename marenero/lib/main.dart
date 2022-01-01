@@ -3,10 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'design/app_theme.dart';
 import 'screens/home_screen.dart';
+import 'firebase_options.dart'; // generated via `flutterfire` CLI
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
 

@@ -11,28 +11,28 @@ dependencies:
   # Flutter
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
+  cupertino_icons: any
 
   # Dart
-  http: ^0.13.3
+  http: any
 
   # Firebase
-  firebase_core: ^1.0.3
-  cloud_firestore: ^1.0.5
-  firebase_analytics: ^8.3.4
+  firebase_core: any
+  cloud_firestore: any
+  firebase_analytics: any
 
   # Spotify
-  spotify_sdk: ^2.1.0
-  flutter_dotenv: ^4.0.0-nullsafety.0
+  spotify_sdk: any
+  flutter_dotenv: any
 
   # Third party
-  google_fonts: ^2.0.0
-  pinput: ^1.2.0
-  auto_size_text: 3.0.0-nullsafety.0
-  uuid: ^3.0.4
-  tap_debouncer: ^2.0.0
-  loading_overlay: ^0.3.0
-  web_browser_detect: ^2.0.2
+  google_fonts: any
+  pinput: any
+  auto_size_text: any
+  uuid: any
+  tap_debouncer: any
+  loading_overlay: any
+  web_browser_detect: any
 
 dev_dependencies:
   flutter_test:

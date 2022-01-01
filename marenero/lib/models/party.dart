@@ -26,7 +26,7 @@ class Party {
 
   /// Creates an instance from a Firestore object.
   factory Party.fromFirestoreObject(DocumentSnapshot snapshot) {
-    final data = snapshot.data()!;
+    final data = snapshot.data()! as Map<String, dynamic>;
     return Party(
       id: snapshot.id,
       code: data[fs.Party.code],

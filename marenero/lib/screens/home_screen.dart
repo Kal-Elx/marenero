@@ -10,7 +10,7 @@ import 'enter_name_screen.dart';
 import 'host_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  final analytics = FirebaseAnalytics();
+  final analytics = FirebaseAnalytics.instance;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();

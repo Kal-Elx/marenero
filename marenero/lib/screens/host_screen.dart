@@ -24,7 +24,7 @@ import '../utils/analytics.dart';
 
 class HostScreen extends StatefulWidget {
   static const routeName = '/host';
-  final analytics = FirebaseAnalytics();
+  final analytics = FirebaseAnalytics.instance;
   late final String hostToken;
 
   @override
