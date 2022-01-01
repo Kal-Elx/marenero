@@ -7,14 +7,16 @@ import 'track_list_tile.dart';
 class SearchTracks extends StatefulWidget {
   final String spotifyToken;
   final String userid;
-  final Function(MyTrack) selectTrackCallback;
-  final Function(bool)? onFocusChange;
+  final Function(MyTrack track) selectTrackCallback;
+  final Function(bool hasFocus)? onFocusChange;
+  final Function(bool hasText)? onType;
 
   SearchTracks({
     required this.spotifyToken,
     required this.userid,
     required this.selectTrackCallback,
     this.onFocusChange,
+    this.onType,
   });
 
   @override
@@ -70,6 +72,7 @@ class _SearchTracksState extends State<SearchTracks> {
                   decoration: InputDecoration(hintText: 'Search for a song'),
                   style: Theme.of(context).textTheme.bodyText1,
                   controller: myController,
+                  onChanged: (text) => widget.onType?.call(text.isNotEmpty),
                 ),
               ),
             ],

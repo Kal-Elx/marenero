@@ -29,17 +29,12 @@ class _SelectTracksScreenState extends State<SelectTracksScreen> with TickerProv
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: 500),
     vsync: this,
+    value: 1.0, // Start expanded
   );
   late final Animation<double> _animation = CurvedAnimation(
     parent: _controller,
     curve: Curves.fastOutSlowIn,
   );
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.reverse();
-  }
 
   @override
   void dispose() {
@@ -114,10 +109,13 @@ class _SelectTracksScreenState extends State<SelectTracksScreen> with TickerProv
                               userid: widget.userId,
                               selectTrackCallback: addSelectedCallback,
                               onFocusChange: (isFocused) {
-                                if (isFocused) {
-                                  _controller.reverse();
-                                } else {
+                                if (!isFocused) {
                                   _controller.forward();
+                                }
+                              },
+                              onType: (hasText) {
+                                if (hasText) {
+                                  _controller.reverse();
                                 }
                               },
                             ),
