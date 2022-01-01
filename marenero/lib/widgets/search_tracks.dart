@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/my_track.dart';
 import '../utils/spotify_api.dart';
+import '../utils/functions.dart';
 import 'track_list_tile.dart';
 
 class SearchTracks extends StatefulWidget {
@@ -66,7 +67,7 @@ class _SearchTracksState extends State<SearchTracks> {
               Padding(
                 padding: EdgeInsets.only(left: 8.0),
                 child: TextField(
-                  autofocus: true,
+                  autofocus: !isWebMobile, // Autofocus does not open keyboard on mobile web.
                   decoration: InputDecoration(hintText: 'Search for a song'),
                   style: Theme.of(context).textTheme.bodyText1,
                   controller: myController,
