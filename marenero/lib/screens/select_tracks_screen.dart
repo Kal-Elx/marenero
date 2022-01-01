@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -109,13 +108,10 @@ class _SelectTracksScreenState extends State<SelectTracksScreen> with TickerProv
                               userid: widget.userId,
                               selectTrackCallback: addSelectedCallback,
                               onFocusChange: (isFocused) {
-                                if (!isFocused) {
-                                  _controller.forward();
-                                }
-                              },
-                              onType: (hasText) {
-                                if (hasText) {
+                                if (isFocused) {
                                   _controller.reverse();
+                                } else {
+                                  _controller.forward();
                                 }
                               },
                             ),
